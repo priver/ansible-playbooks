@@ -1,0 +1,16 @@
+---
+- name: configure locales
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=root group=root mode=0644
+  with_items:
+    - { src: locale/locale.gen.j2, dest: /etc/locale.gen }
+    - { src: locale/default.j2, dest: /etc/default/locale }
+    - { src: locale/profile.j2, dest: /etc/profile.d/locale.sh }
+  notify:
+    - generate locales
+
+- name: configure keyboard
+  template: src=locale/keyboard.j2
+            dest=/etc/default/keyboard
+            owner=root group=root mode=0644

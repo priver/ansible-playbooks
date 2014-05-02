@@ -1,0 +1,5 @@
+---
+- name: compile gitolite config
+  shell: gitolite compile; gitolite trigger POST_COMPILE
+  sudo: yes
+  sudo_user: git

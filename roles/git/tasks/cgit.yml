@@ -1,0 +1,132 @@
+---
+- name: install cgit dependencies
+  apt: pkg={{ item }} state=present
+  with_items:
+    - libssl-dev
+    - liblua5.1-0-dev
+    - liblua5.1-md5-0
+    - groff
+    - fcgiwrap
+
+- name: fetch luacrypto sources
+  local_action: get_url url=https://github.com/mkottman/luacrypto/archive/{{ luacrypto_version }}.tar.gz
+                        dest=roles/git/tmp/luacrypto-{{ luacrypto_version }}.tar.gz
+
+- name: untar luacrypto sources
+  unarchive: src=../tmp/luacrypto-{{ luacrypto_version }}.tar.gz
+             dest=/usr/local/src
+
+- name: check if luacrypto is already installed
+  stat: path=/usr/local/lib/lua/crypto.so
+  register: luacrypto_so
+
+- name: make temporary symlink for lua pkg-config
+  file: src=/usr/lib/x86_64-linux-gnu/pkgconfig/lua5.1.pc
+        dest=/usr/lib/x86_64-linux-gnu/pkgconfig/lua.pc
+        state=link
+  when: not luacrypto_so.stat.exists
+
+- name: install luacrypto
+  shell: >
+    {{ item.cmd }}
+    chdir=/usr/local/src/luacrypto-{{ luacrypto_version }}/
+    creates={{ item.creates }}
+  with_items:
+    - cmd: 'sed -i "s/LUALIBDIR=.*/LUALIBDIR=\/usr\/local\/lib\/lua\/5.1/g" configure.ac'
+      creates: "/usr/local/src/luacrypto-{{ luacrypto_version }}/Makefile"
+    - cmd: "./configure"
+      creates: "/usr/local/src/luacrypto-{{ luacrypto_version }}/Makefile"
+    - cmd: "make"
+      creates: "/usr/local/src/luacrypto-{{ luacrypto_version }}/src/.libs/crypto.so"
+    - cmd: "make install"
+      creates: /usr/local/lib/lua/5.1/crypto.so
+
+- name: remove temporory symlink
+  file: path=/usr/lib/x86_64-linux-gnu/pkgconfig/lua.pc
+        state=absent
+
+- name: fetch cgit sources
+  local_action: get_url url=http://git.zx2c4.com/cgit/snapshot/cgit-{{ cgit_version }}.tar.xz
+                        dest=roles/git/tmp/cgit-{{ cgit_version }}.tar.xz
+                        
+- name: untar cgit sources
+  unarchive: src=../tmp/cgit-{{ cgit_version }}.tar.xz
+             dest=/usr/local/src
+
+- name: override cgit make settings
+  template: src=cgit.mk.j2
+            dest=/usr/local/src/cgit-{{ cgit_version }}/cgit.conf
+            owner=root group=root mode=0664
+
+- name: install cgit
+  shell: >
+    {{ item.cmd }}
+    chdir=/usr/local/src/cgit-{{ cgit_version }}/
+    creates={{ item.creates }}
+  with_items:
+    - { cmd: "make get-git", creates: "/usr/local/src/cgit-{{ cgit_version }}/git/libgit.a" }
+    - { cmd: "make", creates: "/usr/local/src/cgit-{{ cgit_version }}/cgit" }
+    - { cmd: "make install", creates: /srv/http/cgit/cgit.cgi }
+
+- name: install python packages into virtualenv
+  pip: name={{ item.name }}
+       version={{ item.version }}
+       virtualenv=/usr/local/lib/virtualenvs/cgit
+       state=present
+  with_items:
+    - { name: docutils, version: 0.11 }
+    - { name: pygments, version: 1.6 }
+
+- name: add custom pygments style
+  copy: src=cgit.py
+        dest=/usr/local/lib/virtualenvs/cgit/lib/python2.7/site-packages/pygments/styles/cgit.py
+        owner=root group=staff mode=0644
+
+- name: add cgit filters
+  copy: src={{ item.src }}
+        dest=/usr/local/lib/cgit/filters/{{ item.dest }}
+        owner=root group=staff mode={{ item.mode|default('0644') }}
+  with_items:
+    - { src: rst2html, dest: html-converters/rst2html, mode: '0755' }
+    - { src: rst-template.txt, dest: html-converters/resources/rst-template.txt }
+    - { src: syntax-highlighting.py, dest: syntax-highlighting.py, mode: '0755' }
+    - { src: pbkdf2.py, dest: pbkdf2.py, mode: '0755' }
+
+- name: add cgit auth filter
+  template: src=auth-pbkdf2.lua.j2
+            dest=/usr/local/lib/cgit/filters/auth-pbkdf2.lua
+            owner=root group=staff mode=0644
+
+- name: configure cgit
+  template: src=cgitrc.j2
+            dest=/etc/cgitrc
+            owner=root group=root mode=0644
+
+- name: add user www-data to git group
+  user: name=www-data
+        groups=git
+        append=yes
+
+- name: copy ssl cert
+  copy: src={{ cgit_ssl_crt }}
+        dest=/etc/ssl/localcerts/{{ cgit_server_name }}.chained.crt
+        owner=root group=root mode=0644
+
+- name: copy ssl cert key
+  copy: src={{ cgit_ssl_key }}
+        dest=/etc/ssl/localcerts/{{ cgit_server_name }}.key
+        owner=root group=ssl-cert mode=0640
+
+- name: add cgit nginx server
+  template: src=nginx_cgit.j2
+            dest=/etc/nginx/sites-available/{{ cgit_server_name }}
+            owner=root group=root mode=0644
+  notify:
+    - reload nginx
+
+- name: enable cgit nginx server
+  file: src=/etc/nginx/sites-available/{{ cgit_server_name }}
+        dest=/etc/nginx/sites-enabled/{{ cgit_server_name }}
+        state=link
+  notify:
+    - reload nginx

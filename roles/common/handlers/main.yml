@@ -1,0 +1,33 @@
+---
+- name: update apt index
+  apt: update_cache=yes
+
+- name: generate locales
+  command: locale-gen
+
+- name: restart unbound
+  service: name=unbound state=restarted
+
+- name: restart ntp
+  service: name=ntp state=restarted
+
+- name: restart rsyslog
+  service: name=rsyslog state=restarted
+
+- name: restart cron
+  service: name=cron state=restarted
+
+- name: restart ssh
+  service: name=ssh state=restarted
+
+- name: restart exim4
+  service: name=exim4 state=restarted
+
+- name: update exim4 config
+  command: update-exim4.conf
+
+- name: force mail delivery
+  command: exim4 -qff
+
+- name: apply iptables rules
+  command: /etc/network/if-pre-up.d/iptables

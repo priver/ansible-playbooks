@@ -1,0 +1,12 @@
+---
+- include: gai.yml
+- include: packages.yml
+- include: locale.yml
+- include: dns.yml
+- include: time.yml
+- include: sudo.yml
+- include: users.yml
+- include: ssh.yml
+- include: mail.yml
+- include: sysctl.yml
+- include: iptables.yml

@@ -1,0 +1,14 @@
+# Python
+*.py[cod]
+__pycache__
+
+# Logs
+*.log
+pip-log.txt
+
+# IDE / Editors
+.idea
+.project
+.pydevproject
+*.sublime-project
+*.sublime-workspace

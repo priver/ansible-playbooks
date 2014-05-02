@@ -1,0 +1,36 @@
+---
+- hosts: "{{ host }}"
+  remote_user: root
+  gather_facts: False
+  pre_tasks:
+    - name: update apt index
+      raw: apt-get update
+    - name: upgrade packages
+      raw: apt-get upgrade -y -o DPkg::Options::=--force-confold
+    - name: install python
+      raw: apt-get install -y -o DPkg::Options::=--force-confold python python-apt python-pycurl
+    - name: gather facts
+      setup:
+    - name: set hostname
+      hostname: name={{ host|hostname }}
+      notify:
+        - require reboot
+    - name: update hosts file
+      template: src=templates/hosts.j2
+                dest=/etc/hosts
+                owner=root group=root mode=0644
+
+  roles:
+    - common
+
+  post_tasks:
+    - name: check if reboot required
+      stat: path=/run/reboot-required
+      register: reboot_required
+    - name: reboot server
+      command: reboot
+      when: reboot_required.stat.exists
+
+  handlers:
+    - name: require reboot
+      file: path=/run/reboot-required state=touch

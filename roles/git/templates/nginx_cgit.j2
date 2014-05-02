@@ -1,0 +1,39 @@
+# {{ ansible_managed }}
+server {
+    listen 80 deferred;
+    server_name {{ cgit_server_name }};
+
+    error_log /var/log/nginx/{{ cgit_server_name }}.error.log;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 deferred;
+    server_name {{ cgit_server_name }};
+	
+    error_log /var/log/nginx/{{ cgit_server_name }}-ssl.error.log;
+
+    ssl on;
+    ssl_certificate /etc/ssl/localcerts/{{ cgit_server_name }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ cgit_server_name }}.key;
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+    root /srv/http/cgit;
+
+    location / {
+        try_files $uri @cgit;
+        expires 1y;
+    }
+
+    location @cgit {
+        access_log  /var/log/nginx/{{ cgit_server_name }}-ssl.access.log;
+        fastcgi_pass unix:/run/fcgiwrap.socket;
+        fastcgi_split_path_info ^()(.+)$;
+        fastcgi_param SCRIPT_FILENAME $document_root/cgit.cgi;
+        fastcgi_param SCRIPT_NAME "";
+        fastcgi_param PATH_INFO $uri;
+        include fastcgi_params;
+    }
+}

@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    server_name _;
+    server_name_in_redirect off;
+
+    return 301 {{ nginx_default_redirect_url }};
+}

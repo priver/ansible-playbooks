@@ -1,0 +1,3 @@
+---
+- include: gitolite.yml
+- include: cgit.yml

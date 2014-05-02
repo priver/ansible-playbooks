@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+# This is /etc/email-addresses. It is part of the exim package
+{% for user in users %}
+
+{{ user.user.name }}: {{ user.user.email_alias|default(user.user.name) }}@{{ ansible_domain }}
+{{ user.user.name }}@localhost: {{ user.user.email_alias|default(user.user.name) }}@{{ ansible_domain }}
+{{ user.user.name }}@{{ ansible_hostname }}: {{ user.user.email_alias|default(user.user.name) }}@{{ ansible_domain }}
+{{ user.user.name }}@{{ ansible_fqdn }}: {{ user.user.email_alias|default(user.user.name) }}@{{ ansible_domain }}
+{% endfor %}

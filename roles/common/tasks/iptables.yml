@@ -1,0 +1,10 @@
+---
+- name: install ipset
+  apt: pkg=ipset state=present
+
+- name: add iptables rules
+  template: src=iptables/iptables.j2
+            dest=/etc/network/if-pre-up.d/iptables
+            owner=root group=root mode=0755
+  notify:
+    - apply iptables rules

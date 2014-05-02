@@ -1,0 +1,2 @@
+---
+nginx_default_redirect_url: http://{{ ansible_domain }}/

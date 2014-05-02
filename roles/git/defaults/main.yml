@@ -1,0 +1,9 @@
+---
+git_users: []
+cgit_server_name: git.{{ ansible_domain }}
+cgit_auth_secret: "change me!"
+cgit_root_title: git.{{ ansible_domain }}
+cgit_root_desc: "{{ ansible_domain }} git repositories"
+cgit_version: 0.10.1
+git_version: 1.9.1
+luacrypto_version: 0.3.2

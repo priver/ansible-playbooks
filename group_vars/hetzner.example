@@ -1,0 +1,18 @@
+---
+apt_repos:
+  - 'deb http://mirror.hetzner.de/debian/packages wheezy main contrib non-free'
+  - 'deb http://mirror.hetzner.de/debian/packages wheezy-backports main non-free contrib'
+  - 'deb http://mirror.hetzner.de/debian/security wheezy/updates main contrib non-free'
+nameservers:
+  - 213.133.98.98
+  - 213.133.99.99
+  - 213.133.100.100
+  - 2a01:4f8:0:a111::add:9898
+  - 2a01:4f8:0:a102::add:9999
+  - 2a01:4f8:0:a0a1::add:1010
+ntp_servers:
+  - ntp1.hetzner.de
+  - ntp2.hetzner.com
+  - ntp3.hetzner.net
+sysctl_additional:
+  - { name: vm.swappiness, value: 0 }

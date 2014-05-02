@@ -1,0 +1,6 @@
+---
+- hosts: gitservers
+  roles:
+    - common
+    - nginx
+    - git

@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+{% if apt_repos %}
+# Provider APT-mirror
+{% for repo in apt_repos %}
+{{ repo }}
+{% endfor %}
+{% endif %}
+
+# Backup mirror
+deb http://cdn.debian.net/debian/ wheezy main non-free contrib
+deb-src http://cdn.debian.net/debian/ wheezy main non-free contrib
+
+deb http://cdn.debian.net/debian/ wheezy-backports main non-free contrib
+deb-src http://cdn.debian.net/debian/ wheezy-backports main non-free contrib
+
+deb http://security.debian.org/ wheezy/updates  main contrib non-free
+deb-src http://security.debian.org/ wheezy/updates  main contrib non-free
+
