@@ -18,3 +18,4 @@ ntp_servers:
   - 3.debian.pool.ntp.org
 users: []
 sysctl_additional: []
+mailname: "{{ ansible_domain }}"

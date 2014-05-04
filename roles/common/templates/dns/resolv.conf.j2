@@ -1,4 +1,6 @@
 # {{ ansible_managed }}
+{% if ansible_domain %}
 search {{ ansible_domain }}
+{% endif %}
 nameserver 127.0.0.1
 nameserver ::1

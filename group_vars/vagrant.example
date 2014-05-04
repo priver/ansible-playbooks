@@ -7,3 +7,5 @@ sysctl_additional:
 
 ssh_accept:
   - 10.0.2.2
+
+mailname: example.com
