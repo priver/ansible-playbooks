@@ -9,3 +9,5 @@ ssh_accept:
   - 10.0.2.2
 
 mailname: example.com
+nginx_sendfile: "off"
+nginx_default_redirect_url: no

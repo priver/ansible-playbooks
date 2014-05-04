@@ -5,9 +5,9 @@ server {
 
     server_name _;
     server_name_in_redirect off;
-    {% if nginx_default_redirect_url %}
+{% if nginx_default_redirect_url %}
     return 301 {{ nginx_default_redirect_url }};
-    {% else %}
+{% else %}
     return 404;
-    {% endif %}
+{% endif %}
 }
