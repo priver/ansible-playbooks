@@ -6,6 +6,9 @@ __pycache__
 *.log
 pip-log.txt
 
+# tmp
+roles/*/tmp
+
 # IDE / Editors
 .idea
 .project
