@@ -10,7 +10,7 @@
             dest=/etc/sysctl.conf
             owner=root group=root mode=0644
 
-- name: touch sysctl.d files
+- name: create sysctl.d files
   copy: dest=/etc/sysctl.d/{{ item }}
         content=""
         force=no

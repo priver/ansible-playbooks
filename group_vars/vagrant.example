@@ -8,6 +8,9 @@ sysctl_additional:
 ssh_accept:
   - 10.0.2.2
 
+postgresql_accept:
+  - 10.0.2.2/32
+
 mailname: example.com
 nginx_sendfile: "off"
 nginx_default_redirect_url: no

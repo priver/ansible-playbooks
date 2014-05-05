@@ -1,0 +1,30 @@
+---
+- name: install postgresql
+  apt: pkg=postgresql state=present
+
+- name: create sysctl.d files
+  copy: dest=/etc/sysctl.d/30postgresql.conf
+        content=""
+        force=no
+        owner=root group=root mode=0644
+
+- name: modify kernel resourses
+  sysctl: name={{ item.name }}
+          value={{ item.value }}
+          sysctl_file=/etc/sysctl.d/30postgresql.conf
+          state=present
+  with_items:
+    - { name: kernel.shmmax, value: "{{ kernel_shmmax }}" }
+    - { name: kernel.shmall, value: "{{ kernel_shmall }}" }
+
+- name: configure postgresql
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=postgres group=postgres mode={{ item.mode|default('0644') }}
+  with_items:
+    - { src: pg_ctl.conf.j2, dest: /etc/postgresql/9.1/main/pg_ctl.conf }
+    - { src: pg_hba.conf.j2, dest: /etc/postgresql/9.1/main/pg_hba.conf, mode: '0640' }
+    - { src: pg_ident.conf.j2, dest: /etc/postgresql/9.1/main/pg_ident.conf, mode: '0640' }
+    - { src: postgresql.conf.j2, dest: /etc/postgresql/9.1/main/postgresql.conf }
+  notify:
+    - restart postgresql

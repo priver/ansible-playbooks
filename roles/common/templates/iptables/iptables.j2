@@ -49,6 +49,24 @@ ${IPSET} add ssh_accept6 {{ addr }}
 {% endfor %}
 {% endif %}
 
+{% if inventory_hostname in groups['postgresqlservers'] %}
+# postgresql
+{% if postgresql_accept is defined %}
+${IPSET} destroy postgresql_accept -q
+${IPSET} create postgresql_accept hash:ip family inet hashsize {{ postgresql_accept|count|ceil2(64) }} maxelem {{ postgresql_accept|count }}
+{% for addr in postgresql_accept %}
+${IPSET} add postgresql_accept {{ addr }}
+{% endfor %}
+{% endif %}
+{% if postgresql_accept6 is defined %}
+${IPSET} destroy postgresql_accept6 -q
+${IPSET} create postgresql_accept6 hash:ip family inet6 hashsize {{ postgresql_accept6|count|ceil2(64) }} maxelem {{ postgresql_accept6|count }}
+{% for addr in postgresql_accept6 %}
+${IPSET} add postgresql_accept6 {{ addr }}
+{% endfor %}
+{% endif %}
+{% endif %}
+
 
 # INPUT
 
@@ -92,6 +110,16 @@ ${IP6T} -A INPUT -j REJECT --reject-with icmp6-port-unreachable
 # www
 ${IPT} -A TCP -p tcp -m multiport --dports 80,443 -j ACCEPT
 ${IP6T} -A TCP -p tcp -m multiport --dports 80,443 -j ACCEPT
+{% endif %}
+{% if inventory_hostname in groups['postgresqlservers'] %}
+
+# postgresql
+{% if postgresql_accept is defined %}
+${IPT} -A TCP -p tcp --dport 5432 -m set --match-set postgresql_accept src -j ACCEPT
+{% endif %}
+{% if postgresql_accept6 is defined %}
+${IP6T} -A TCP -p tcp --dport 5432 -m set --match-set postgresql_accept6 src -j ACCEPT
+{% endif %}
 {% endif %}
 
 # ssh
