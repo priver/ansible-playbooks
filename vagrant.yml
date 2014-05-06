@@ -5,3 +5,4 @@
     - common
     - nginx
     - postgresql
+    - django

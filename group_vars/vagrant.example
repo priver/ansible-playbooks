@@ -14,3 +14,6 @@ postgresql_accept:
 mailname: example.com
 nginx_sendfile: "off"
 nginx_default_redirect_url: no
+
+django_projects:
+  - { name: myproject, db_password: myproject }

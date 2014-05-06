@@ -1,6 +1,10 @@
 ---
 - name: install postgresql
-  apt: pkg=postgresql state=present
+  apt: pkg={{ item }} state=present
+  with_items:
+    - postgresql
+    - libpq-dev
+    - python-psycopg2
 
 - name: create sysctl.d files
   copy: dest=/etc/sysctl.d/30postgresql.conf
