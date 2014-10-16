@@ -10,8 +10,8 @@ pip-log.txt
 roles/*/tmp
 
 # IDE / Editors
-.idea
-.project
-.pydevproject
 *.sublime-project
 *.sublime-workspace
+
+# OSX
+.DS_Store

@@ -11,7 +11,6 @@
   notify:
     - restart rsyslog
     - restart cron
-    - require reboot
 
 - name: intstall ntp
   apt: pkg=ntp state=present
@@ -21,4 +20,4 @@
             dest=/etc/ntp.conf
             owner=root group=root mode=0644
   notify:
-    - restart ntp 
+    - restart ntp

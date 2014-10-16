@@ -1,8 +1,0 @@
----
-- hosts: vagrant
-  sudo: yes
-  roles:
-    - common
-    - nginx
-    - postgresql
-    - django

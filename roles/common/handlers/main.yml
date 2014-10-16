@@ -1,7 +1,4 @@
 ---
-- name: update apt index
-  apt: update_cache=yes
-
 - name: generate locales
   command: locale-gen
 

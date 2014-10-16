@@ -12,8 +12,9 @@
   with_items:
     - { src: packages/sources.list.j2, dest: /etc/apt/sources.list }
     - { src: packages/99settings.j2, dest: /etc/apt/apt.conf.d/99settings }
-  notify:
-    - update apt index
+
+- name: update apt index
+  apt: update_cache=yes
 
 - name: install git
   apt: pkg=git default_release=wheezy-backports state=present
