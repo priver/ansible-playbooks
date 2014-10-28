@@ -1,0 +1,10 @@
+---
+- name: fetch oracle jre package
+  get_url: url={{ jre_download_link }}
+           dest=/usr/local/debs/{{ jre_package_name }}
+
+- name: install oracle jre
+  apt: deb=/usr/local/debs/{{ jre_package_name }}
+
+- name: install java native access
+  apt: pkg=libjna-java state=present

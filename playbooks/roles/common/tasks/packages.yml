@@ -1,0 +1,43 @@
+---
+- name: remove apt config
+  file: path={{ item }} state=absent
+  with_items:
+    - /etc/apt/apt.conf
+    - /etc/apt/apt.conf.d/99hetzner
+
+- name: configure apt
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=root group=root mode=0644
+  with_items:
+    - { src: packages/sources.list.j2, dest: /etc/apt/sources.list }
+    - { src: packages/99settings.j2, dest: /etc/apt/apt.conf.d/99settings }
+
+- name: update apt index
+  apt: update_cache=yes
+
+- name: install git
+  apt: pkg=git default_release=wheezy-backports state=present
+
+- name: install common packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - bsd-mailx
+    - build-essential
+    - mc
+    - python-pip
+    - python-virtualenv
+    - unattended-upgrades
+
+- name: configure unattended-upgrades
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=root group=root mode=0644
+  with_items:
+    - { src: packages/50unattended-upgrades.j2, dest: /etc/apt/apt.conf.d/50unattended-upgrades }
+    - { src: packages/20periodic.j2, dest: /etc/apt/apt.conf.d/20periodic }
+
+- name: make directory to store local debs
+  file: path=/usr/local/debs
+        owner=root group=staff mode=2755
+        state=directory

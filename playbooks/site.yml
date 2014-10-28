@@ -1,0 +1,2 @@
+---
+- include: cassandra_nodes.yml

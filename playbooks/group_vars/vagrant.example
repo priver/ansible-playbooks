@@ -1,0 +1,23 @@
+users:
+  - { user: "{{ user_list.vagrant }}", groups: adm }
+  - { user: "{{ user_list.someuser }}", groups: adm }
+
+sysctl_additional:
+  - { name: vm.swappiness, value: 0 }
+
+nameservers:
+  - 10.0.2.3
+
+ssh_accept:
+  - 10.0.2.2
+
+postgresql_accept:
+  - 10.0.2.2/32
+
+mailname: vagrant
+
+nginx_sendfile: "off"
+nginx_default_redirect_url: no
+
+django_projects:
+  - { name: myproject, db_password: myproject }

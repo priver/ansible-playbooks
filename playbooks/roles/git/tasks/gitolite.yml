@@ -1,0 +1,81 @@
+---
+- name: install gitolite
+  apt: pkg={{ item }} default_release=wheezy-backports state=installed
+  with_items:
+    - git
+    - gitolite3
+
+- name: add git user
+  user: name=git
+        comment="git repository hosting"
+        system=yes
+        home=/srv/git
+        createhome=no
+        password="*"
+        groups=operator
+        shell=/bin/bash
+        state=present
+
+- name: make gitolite directory
+  file: path=/srv/git
+        owner=git group=git mode=0755
+        state=directory
+
+- name: check if gitolite is already set up
+  stat: path=/srv/git/.gitolite.rc
+  register: gitolite_setup
+
+- name: setup gitolite
+  shell: gitolite setup -a dummy
+  sudo: yes
+  sudo_user: git
+  when: not gitolite_setup.stat.exists
+
+- name: configure gitolite
+  template: src=gitolite.rc.j2
+            dest=/srv/git/.gitolite.rc
+            owner=git group=git mode=0644
+
+- name: remove gitolite-admin repo
+  file: path=/srv/git/repositories/gitolite-admin.git
+        state=absent
+
+- name: configure gitolite repos
+  template: src=gitolite.conf.j2
+            dest=/srv/git/.gitolite/conf/gitolite.conf
+            owner=git group=git mode=0644
+  notify:
+    - compile gitolite config
+
+- name: remove testing repo
+  file: path=/srv/git/repositories/testing.git
+        state=absent
+
+- name: make gitolite keys directory
+  file: path=/srv/git/.gitolite/keydir
+        owner=git group=git mode=0755
+        state=directory
+
+- name: add gitoloite users
+  authorized_key: user=git
+                  key="{{ item.pub_key }}"
+                  path=/srv/git/.gitolite/keydir/{{ item.name }}.pub
+                  manage_dir=no
+                  state=present
+  notify:
+    - compile gitolite config
+  with_items: git_users
+
+- name: remove unknown gitolite users
+  file: path={{ item }}
+        state=absent
+  notify:
+    - compile gitolite config
+  when: item|basename|split_filename not in git_users|attrs('name')
+  with_fileglob:
+    - /srv/git/.gitolite/keydir/*
+
+- name: symlink gitolite authorized_keys file
+  file: src=/srv/git/.ssh/authorized_keys
+        dest=/etc/ssh/keys/git_keys
+        state=link
