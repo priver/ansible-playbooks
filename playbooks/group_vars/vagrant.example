@@ -1,3 +1,5 @@
+---
+# common
 users:
   - { user: "{{ user_list.vagrant }}", groups: adm }
   - { user: "{{ user_list.someuser }}", groups: adm }
@@ -16,8 +18,10 @@ postgresql_accept:
 
 mailname: vagrant
 
+# nginx
 nginx_sendfile: "off"
 nginx_default_redirect_url: no
 
+# django
 django_projects:
   - { name: myproject, db_password: myproject }

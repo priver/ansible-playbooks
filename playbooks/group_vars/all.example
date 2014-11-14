@@ -1,3 +1,5 @@
+---
+# common
 locales:
   - en_US.UTF-8 UTF-8
   - ru_RU.UTF-8 UTF-8
@@ -34,5 +36,7 @@ smtp_smarthost_port: 587
 smtp_smarthost_login: postmaster@example.com
 smtp_smarthost_password: mailgun_password
 
+
+# oracle jre
 jre_package_name: oracle-java7-jre_7u72_amd64.deb
 jre_download_link: https://example.com/{{ jre_package_name }}
