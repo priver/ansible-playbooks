@@ -96,6 +96,19 @@ Role groups
 
   - open TCP ports 80,443 in iptables
 
+Run a playbooks
+---------------
+
+To run playbook for all servers:
+
+.. code:: bash
+
+    $ ansible-playbook site.yml
+
+Also you can run playbook on speciafied role group:
+
+* cassandra_nodes.yml
+
 
 Bootstrapping a server
 ======================
@@ -126,9 +139,9 @@ You can create Debian Wheezy Vagrant box and apply Common_ role to it. All the v
     $ ansible-playbook vagrant_box.yml -i vagrant_hosts
     $ vagrant package --base <VM_name>
 
-Or you can checkout my box at `Vagrant Cloud`_.
+Or you can checkout `my box`_ at Vagrant Cloud.
 
-.. _Vagrant Cloud: https://vagrantcloud.com/priver/boxes/wheezy-amd64
+.. _my box: https://vagrantcloud.com/priver/boxes/wheezy-amd64
 
 .. _Common: docs/common.rst
 .. _Cassandra: docs/cassandra.rst
