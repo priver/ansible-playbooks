@@ -90,7 +90,7 @@ Role groups
 * postgresql_servers
 
   - perform Postgresql_ role
-  - open TCP port 5432 in iptables for postgresql_accept and postgresql_accept6 lists
+  - open TCP port 5432 in iptables for ``postgresql_accept`` and ``postgresql_accept6`` lists
 
 * webservers
 
@@ -150,7 +150,6 @@ Create ``Vagrantfile`` in your project root:
 
         config.vm.provision "ansible" do |ansible|
             ansible.groups = {
-                "vagrant" => ["default"],
                 "postgresql_servers" => ["default"]
             }
 
