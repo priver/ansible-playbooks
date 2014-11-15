@@ -3,13 +3,13 @@
   apt: pkg=unbound state=present
 
 - name: configure unbound
-  template: src='dns/unbound.conf.j2'
-            dest='/etc/unbound/unbound.conf'
+  template: src=dns/unbound.conf.j2
+            dest=/etc/unbound/unbound.conf
             owner=root group=root mode=0644
   notify:
     - restart unbound
 
 - name: configure resolver
-  template: src='dns/resolv.conf.j2'
-            dest='/etc/resolv.conf'
+  template: src=dns/resolv.conf.j2
+            dest=/etc/resolv.conf
             owner=root group=root mode=0644

@@ -1,2 +1,3 @@
 ---
 - include: cassandra_nodes.yml
+- include: postgresql_servers.yml

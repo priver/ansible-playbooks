@@ -22,6 +22,6 @@ mailname: vagrant
 nginx_sendfile: "off"
 nginx_default_redirect_url: no
 
-# django
-django_projects:
-  - { name: myproject, db_password: myproject }
+# postgresql
+postgresql_databases:
+  - { name: mydb, password: mypasswd }

@@ -32,3 +32,20 @@
     - { src: postgresql.conf.j2, dest: /etc/postgresql/9.1/main/postgresql.conf }
   notify:
     - restart postgresql
+
+- name: create postgresql user
+  sudo: yes
+  sudo_user: postgres
+  postgresql_user: name={{ item.name }}
+                   password={{ item.password }}
+  with_items: postgresql_databases
+
+- name: create postgresql db
+  sudo: yes
+  sudo_user: postgres
+  postgresql_db: name={{ item.name }}
+                 encoding="{% if locales[0].endswith('UTF-8') %}UTF8{% else %}SQL_ASCII{% endif %}"
+                 lc_collate="{{ locales[0].split()[0] }}"
+                 lc_ctype="{{ locales[0].split()[0] }}"
+                 template="template0"
+  with_items: postgresql_databases

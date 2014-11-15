@@ -9,7 +9,7 @@
     - 0353B12C
 
 - name: add cassandra apt repository
-  apt_repository: repo='deb http://www.apache.org/dist/cassandra/debian 21x main' state=present
+  apt_repository: repo="deb http://www.apache.org/dist/cassandra/debian 21x main" state=present
 
 - name: install cassandra
   apt: name=cassandra state=present

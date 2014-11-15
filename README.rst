@@ -108,6 +108,7 @@ To run playbook for all servers:
 Also you can run playbook on speciafied role group:
 
 * cassandra_nodes.yml
+* postgresql_servers.yml
 
 
 Bootstrapping a server

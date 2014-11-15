@@ -1,4 +1,6 @@
 ---
+postgresql_databases: []
+
 postgresql_max_connections: 200
 postgresql_checkpoint_segments: 32
 postgresql_checkpoint_completion_target: 0.7
