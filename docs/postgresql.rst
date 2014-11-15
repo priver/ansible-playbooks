@@ -39,9 +39,11 @@ Variables
 | ``postgresql_wal_buffers``                  | no       | min(``shared_buffers`` * 3 / 100, 16 Mb)               |                                     |
 |                                             |          | if value > 14 Gb, then make it 16 Mb JRE package name. |                                     |
 +---------------------------------------------+----------+--------------------------------------------------------+-------------------------------------+
-| ``postgresql_accept``                       | no       |                                                        | List of IPv4 accepted addresses.    |
+| ``postgresql_accept``                       | no       |                                                        | List of IPv4 accepted net           |
+|                                             |          |                                                        | addresses (``X.X.X.X/netmask``).    |
 +---------------------------------------------+----------+--------------------------------------------------------+-------------------------------------+
-| ``postgresql_accept6``                      | no       |                                                        | List of IPv6 accepted addresses.    |
+| ``postgresql_accept6``                      | no       |                                                        | List of IPv6 accepted net           |
+|                                             |          |                                                        | addresses (``X.X.X.X/netmask``).    |
 +---------------------------------------------+----------+--------------------------------------------------------+-------------------------------------+
 | ``kernel_shmall``                           | no       | RAM (in Mb) * 128                                      | ``kernel.shmall`` sysctl parameter. |
 +---------------------------------------------+----------+--------------------------------------------------------+-------------------------------------+

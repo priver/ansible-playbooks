@@ -96,8 +96,8 @@ Role groups
 
   - open TCP ports 80,443 in iptables
 
-Run a playbooks
----------------
+Run playbooks
+-------------
 
 To run playbook for all servers:
 
@@ -121,13 +121,85 @@ Bootstrapping a server
 Bootstrap playbook installs dependencies for ansible (python, python-apt and pycurl), sets hostname and performs Common_ role on specified server. If hostname and/or timezone changes server will be rebooted.
 
 
-Using playbooks with vagrant
-============================
+Using playbooks with vagrant_
+=============================
+
+.. _vagrant: https://www.vagrantup.com/
 
 Vagrant provisioning
 --------------------
 
-*TODO*
+Add following lines to ``ansible.cfg``:
+
+.. code:: ini
+
+    roles_path = /path/to/ansible-playbooks/playbooks/roles
+    filter_plugins = /path/to/ansible-playbooks/playbooks/filter_plugins
+
+Create ``Vagrantfile`` in your project root:
+
+.. code:: ruby
+
+    VAGRANTFILE_API_VERSION = "2"
+
+    Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+        config.vm.box = "priver/wheezy-amd64"
+
+        # config.vm.network "forwarded_port", guest: 80, host: 8080
+        # config.vm.synced_folder "../data", "/vagrant_data"
+
+        config.vm.provision "ansible" do |ansible|
+            ansible.groups = {
+                "vagrant" => ["default"],
+                "postgresql_servers" => ["default"]
+            }
+
+            ansible.playbook = "provisioning/playbook.yml"
+        end
+    end
+
+Then create ``provisioning/playbook.yml`` like this:
+
+.. code:: yaml
+
+    ---
+    - hosts: default
+      remote_user: vagrant
+      sudo: yes
+
+      vars:
+        users:
+          - user:
+              name: vagrant
+              password: "$6$ERfXCVxk$mmdpfeit6dZMQrqRxrE2/LNKGKnIp47UuYzJPF3RvOtpT3jgVDF5hHnA1r0pQYg6bwd4pkQlm9yQSa.OdZQtK1"
+              email_alias: vagrant
+              uid: 1000
+              gecos: vagrant
+              authorized_keys:
+                - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key
+            groups: adm
+
+        nameservers:
+          - 10.0.2.3
+
+        sysctl_additional:
+          - { name: vm.swappiness, value: 0 }
+
+        ssh_accept:
+          - 10.0.2.2
+
+        postgresql_accept:
+          - 10.0.2.2/32
+
+        postgresql_databases:
+          - { name: mydb, password: mypasswd }
+
+        mailname: vagrant
+
+      roles:
+        - postgresql
+
+Now you can run your virtual machine with ``vagrant up`` command.
 
 
 Creating a base box
@@ -140,7 +212,7 @@ You can create Debian Wheezy Vagrant box and apply Common_ role to it. All the v
     $ ansible-playbook vagrant_box.yml -i vagrant_hosts
     $ vagrant package --base <VM_name>
 
-Or you can checkout `my box`_ at Vagrant Cloud.
+Or you can check out `my box`_ at Vagrant Cloud.
 
 .. _my box: https://vagrantcloud.com/priver/boxes/wheezy-amd64
 
