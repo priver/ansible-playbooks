@@ -211,9 +211,9 @@ You can create Debian Wheezy Vagrant box and apply Common_ role to it. All the v
     $ ansible-playbook vagrant_box.yml -i vagrant_hosts
     $ vagrant package --base <VM_name>
 
-Or you can check out `my box`_ at Vagrant Cloud.
+Or you can check out `my box`_ at Atlas.
 
-.. _my box: https://vagrantcloud.com/priver/boxes/wheezy-amd64
+.. _my box: https://atlas.hashicorp.com/priver/boxes/wheezy-amd64
 
 .. _Common: docs/common.rst
 .. _Cassandra: docs/cassandra.rst
