@@ -45,3 +45,23 @@ server {
     {{ try_files(item) }}
 }
 {% endif %}
+
+{% if 'add_www' in item and item.add_www %}
+server {
+    listen 80;
+    listen [::]:80;
+{% if item.ssl %}
+    listen 443 ssl spdy;
+    listen [::]:443 ssl spdy;
+{% endif %}
+
+    server_name www.{{ item.server_name }};
+
+    access_log /var/log/nginx/www.{{ item.server_name }}_access.log;
+    error_log /var/log/nginx/www.{{ item.server_name }}_error.log;
+
+    location / {
+        return 301 http{% if item.ssl %}s{% endif %}://$host$request_uri;
+    }
+}
+{% endif %}
