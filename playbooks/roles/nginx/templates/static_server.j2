@@ -1,0 +1,47 @@
+# {{ ansible_managed }}
+{% macro try_files(item) -%}
+    root /srv/www/{{ item.server_name }};
+    {% if 'index' in item %}index {{ item.index }};{% endif %}
+
+    location / {
+        try_files $uri{% if 'index' in item %} $uri/{% endif %} =404;
+        expires 1y;
+    }
+{%- endmacro %}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name {{ item.server_name }};
+
+    access_log /var/log/nginx/{{ item.server_name }}_access.log;
+    error_log /var/log/nginx/{{ item.server_name }}_error.log;
+
+{% if item.ssl == 'only' %}
+    location / {
+        return 301 https://$host$request_uri;
+    }
+{% else %}
+    {{ try_files(item) }}
+{% endif %}
+}
+
+{% if item.ssl %}
+server {
+    listen 443 ssl spdy;
+    listen [::]:443 ssl spdy;
+
+    server_name {{ item.server_name }};
+
+    access_log /var/log/nginx/{{ item.server_name }}-ssl_access.log;
+    error_log /var/log/nginx/{{ item.server_name }}-ssl_error.log;
+
+    ssl_certificate /etc/ssl/localcerts/{{ item.server_name }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ item.server_name }}.key;
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+    {{ try_files(item) }}
+}
+{% endif %}

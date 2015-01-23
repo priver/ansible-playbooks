@@ -1,11 +1,11 @@
 # {{ ansible_managed }}
 server {
     listen 80 default_server;
-    listen [::]:80 default_server ipv6only=on;
+    listen [::]:80 default_server;
 
     server_name _;
     server_name_in_redirect off;
-{% if nginx_default_redirect_url %}
+{% if nginx_default_redirect_url is defined %}
     return 301 {{ nginx_default_redirect_url }};
 {% else %}
     return 404;

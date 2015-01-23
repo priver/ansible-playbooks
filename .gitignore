@@ -1,17 +1,14 @@
-# Python
+__pycache__/
 *.py[cod]
-__pycache__
 
-# Logs
 *.log
 pip-log.txt
 
-# tmp
-roles/*/tmp
+.vagrant/
 
-# IDE / Editors
+playbooks/test.yml
+playbooks/roles/*/tmp
+
 *.sublime-project
 *.sublime-workspace
-
-# OSX
 .DS_Store

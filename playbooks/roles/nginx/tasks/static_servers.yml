@@ -1,0 +1,36 @@
+---
+- name: make dirs for virtual hosts
+  file: path=/srv/www/{{ item.server_name }}
+        owner=root group=root mode=755
+        state=directory
+  with_items: nginx_static_servers
+
+- name: copy ssl certs
+  copy: src={{ item.ssl_cert }}
+        dest=/etc/ssl/localcerts/{{ item.server_name }}.chained.crt
+        owner=root group=root mode=0644
+  when: item.ssl
+  with_items: nginx_static_servers
+
+- name: copy ssl cert keys
+  copy: src={{ item.ssl_key }}
+        dest=/etc/ssl/localcerts/{{ item.server_name }}.key
+        owner=root group=ssl-cert mode=0640
+  when: item.ssl
+  with_items: nginx_static_servers
+
+- name: configure virtual hosts
+  template: src=static_server.j2
+            dest=/etc/nginx/sites-available/{{ item.server_name }}
+            owner=root group=root mode=0644
+  with_items: nginx_static_servers
+  notify:
+    - reload nginx
+
+- name: enable virtual hosts
+  file: src=/etc/nginx/sites-available/{{ item.server_name }}
+        dest=/etc/nginx/sites-enabled/{{ item.server_name }}
+        state=link
+  with_items: nginx_static_servers
+  notify:
+    - reload nginx
