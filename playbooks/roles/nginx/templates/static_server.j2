@@ -1,67 +1,71 @@
 # {{ ansible_managed }}
-{% macro try_files(item) -%}
-    root /srv/www/{{ item.server_name }};
-    {% if 'index' in item %}index {{ item.index }};{% endif %}
-
-    location / {
-        try_files $uri{% if 'index' in item %} $uri/{% endif %} =404;
-        expires 1y;
-    }
+{% macro serve(item) -%}
+    root /srv/www/{{ item.key }};
+{% if 'index' in item.value %}
+    index {{ item.value.index }};
+{% endif %}
+{% if 'autoindex' in item.value and item.value.autoindex %}
+    autoindex on;
+{% endif %}
+{% if 'expires' in item.value %}
+    expires {{ item.value.expires }};
+{% endif %}
 {%- endmacro %}
 
 server {
     listen 80;
     listen [::]:80;
 
-    server_name {{ item.server_name }};
+    server_name {{ item.key }};
 
-    access_log /var/log/nginx/{{ item.server_name }}_access.log;
-    error_log /var/log/nginx/{{ item.server_name }}_error.log;
+    access_log /var/log/nginx/{{ item.key }}_access.log;
+    error_log /var/log/nginx/{{ item.key }}_error.log;
 
-{% if item.ssl == 'only' %}
-    location / {
-        return 301 https://$host$request_uri;
-    }
+{% if item.value.ssl == 'only' %}
+    return 301 https://$host$request_uri;
 {% else %}
-    {{ try_files(item) }}
+    {{ serve(item) }}
 {% endif %}
 }
+{% if item.value.ssl %}
 
-{% if item.ssl %}
 server {
     listen 443 ssl spdy;
     listen [::]:443 ssl spdy;
 
-    server_name {{ item.server_name }};
+    server_name {{ item.key }};
 
-    access_log /var/log/nginx/{{ item.server_name }}-ssl_access.log;
-    error_log /var/log/nginx/{{ item.server_name }}-ssl_error.log;
+    access_log /var/log/nginx/{{ item.key }}-ssl_access.log;
+    error_log /var/log/nginx/{{ item.key }}-ssl_error.log;
 
-    ssl_certificate /etc/ssl/localcerts/{{ item.server_name }}.chained.crt;
-    ssl_certificate_key /etc/ssl/localcerts/{{ item.server_name }}.key;
+    ssl_certificate /etc/ssl/localcerts/{{ item.key }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ item.key }}.key;
 
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
 
-    {{ try_files(item) }}
+    {{ serve(item) }}
 }
 {% endif %}
+{% if 'add_www' in item.value and item.value.add_www %}
 
-{% if 'add_www' in item and item.add_www %}
 server {
     listen 80;
     listen [::]:80;
-{% if item.ssl %}
+{% if item.value.ssl %}
     listen 443 ssl spdy;
     listen [::]:443 ssl spdy;
 {% endif %}
 
-    server_name www.{{ item.server_name }};
+    server_name www.{{ item.key }};
 
-    access_log /var/log/nginx/www.{{ item.server_name }}_access.log;
-    error_log /var/log/nginx/www.{{ item.server_name }}_error.log;
+    access_log /var/log/nginx/www.{{ item.key }}_access.log;
+    error_log /var/log/nginx/www.{{ item.key }}_error.log;
 
-    location / {
-        return 301 http{% if item.ssl %}s{% endif %}://$host$request_uri;
-    }
+{% if item.value.ssl %}
+    ssl_certificate /etc/ssl/localcerts/{{ item.key }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ item.key }}.key;
+{% endif %}
+
+    return 301 http{% if item.value.ssl %}s{% endif %}://{{ item.key }}$request_uri;
 }
 {% endif %}

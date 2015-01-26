@@ -1,4 +1,4 @@
 ---
 dependencies:
-  - { role: common }
-  - { role: oraclejre }
+  - { role: common, tags: [ 'common', 'dep' ] }
+  - { role: oraclejre, tags: [ 'oraclejre', 'dep' ] }
