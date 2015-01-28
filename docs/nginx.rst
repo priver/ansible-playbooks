@@ -44,6 +44,7 @@ Static servers
 | ``ssl_key``     | if ``ssl`` is ``yes`` or ``only`` | Absolute path to SSL private key.                           |
 +-----------------+-----------------------------------+-------------------------------------------------------------+
 | ``sync``        | yes                               | List of hashes to rsync between local and remote machines:  |
+|                 |                                   |                                                             |
 |                 |                                   | ``src``                                                     |
 |                 |                                   |   Local path to static content                              |
 |                 |                                   | ``dest``                                                    |
