@@ -1,14 +1,14 @@
 # {{ ansible_managed }}
 {% macro serve(item) -%}
-    root /srv/www/{{ item.key }};
-{% if 'index' in item.value %}
-    index {{ item.value.index }};
+    root /srv/www/{{ item.server_name }};
+{% if 'index' in item %}
+    index {{ item.index }};
 {% endif %}
-{% if 'autoindex' in item.value and item.value.autoindex %}
+{% if 'autoindex' in item and item.autoindex %}
     autoindex on;
 {% endif %}
-{% if 'expires' in item.value %}
-    expires {{ item.value.expires }};
+{% if 'expires' in item %}
+    expires {{ item.expires }};
 {% endif %}
 {%- endmacro %}
 
@@ -16,56 +16,58 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name {{ item.key }};
+    server_name {{ item.server_name }};
 
-    access_log /var/log/nginx/{{ item.key }}_access.log;
-    error_log /var/log/nginx/{{ item.key }}_error.log;
+    access_log /var/log/nginx/{{ item.server_name }}_access.log;
+    error_log /var/log/nginx/{{ item.server_name }}_error.log;
 
-{% if item.value.ssl == 'only' %}
+{% if item.ssl == 'only' %}
     return 301 https://$host$request_uri;
 {% else %}
     {{ serve(item) }}
 {% endif %}
 }
-{% if item.value.ssl %}
+{% if item.ssl %}
 
 server {
     listen 443 ssl spdy;
     listen [::]:443 ssl spdy;
 
-    server_name {{ item.key }};
+    server_name {{ item.server_name }};
 
-    access_log /var/log/nginx/{{ item.key }}-ssl_access.log;
-    error_log /var/log/nginx/{{ item.key }}-ssl_error.log;
+    access_log /var/log/nginx/{{ item.server_name }}-ssl_access.log;
+    error_log /var/log/nginx/{{ item.server_name }}-ssl_error.log;
 
-    ssl_certificate /etc/ssl/localcerts/{{ item.key }}.chained.crt;
-    ssl_certificate_key /etc/ssl/localcerts/{{ item.key }}.key;
+    ssl_certificate /etc/ssl/localcerts/{{ item.server_name }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ item.server_name }}.key;
 
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+    add_header Strict-Transport-Security "max-age=31536000";
 
     {{ serve(item) }}
 }
 {% endif %}
-{% if 'add_www' in item.value and item.value.add_www %}
+{% if 'add_www' in item and item.add_www %}
 
 server {
     listen 80;
     listen [::]:80;
-{% if item.value.ssl %}
+{% if item.ssl %}
     listen 443 ssl spdy;
     listen [::]:443 ssl spdy;
 {% endif %}
 
-    server_name www.{{ item.key }};
+    server_name www.{{ item.server_name }};
 
-    access_log /var/log/nginx/www.{{ item.key }}_access.log;
-    error_log /var/log/nginx/www.{{ item.key }}_error.log;
+    access_log /var/log/nginx/www.{{ item.server_name }}_access.log;
+    error_log /var/log/nginx/www.{{ item.server_name }}_error.log;
 
-{% if item.value.ssl %}
-    ssl_certificate /etc/ssl/localcerts/{{ item.key }}.chained.crt;
-    ssl_certificate_key /etc/ssl/localcerts/{{ item.key }}.key;
+{% if item.ssl %}
+    ssl_certificate /etc/ssl/localcerts/{{ item.server_name }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ item.server_name }}.key;
+
+    add_header Strict-Transport-Security "max-age=31536000";
 {% endif %}
 
-    return 301 http{% if item.value.ssl %}s{% endif %}://{{ item.key }}$request_uri;
+    return 301 http{% if item.ssl %}s{% endif %}://{{ item.server_name }}$request_uri;
 }
 {% endif %}
