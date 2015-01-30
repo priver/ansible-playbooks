@@ -1,10 +1,14 @@
 ---
-- name: fetch oracle jre package
-  get_url: url={{ jre_download_link }}
-           dest=/usr/local/debs/{{ jre_package_name }}
+- name: add oracle-jre apt keys
+  apt_key: keyserver={{ jre_pgp_keyserver }}
+           id={{ jre_pgp_key_id }}
+           state=present
 
-- name: install oracle jre
-  apt: deb=/usr/local/debs/{{ jre_package_name }}
+- name: add oracle-jre apt repository
+  apt_repository: "repo='{{ jre_debian_repo }}' state=present"
+
+- name: install oracle-jre
+  apt: name={{ jre_package_name }} state=present
 
 - name: install java native access
   apt: pkg=libjna-java state=present

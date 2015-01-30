@@ -36,8 +36,3 @@
   with_items:
     - { src: packages/50unattended-upgrades.j2, dest: /etc/apt/apt.conf.d/50unattended-upgrades }
     - { src: packages/20periodic.j2, dest: /etc/apt/apt.conf.d/20periodic }
-
-- name: make directory to store local debs
-  file: path=/usr/local/debs
-        owner=root group=staff mode=2755
-        state=directory
