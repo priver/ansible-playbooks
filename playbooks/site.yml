@@ -1,4 +1,5 @@
 ---
 - include: webservers.yml
+- include: redis_servers.yml
 - include: postgresql_servers.yml
 - include: cassandra_nodes.yml

@@ -1,0 +1,5 @@
+---
+- hosts: postgresql_servers
+  sudo: yes
+  roles:
+    - redis

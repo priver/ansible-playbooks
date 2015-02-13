@@ -15,6 +15,7 @@ Roles
 * `Nginx`_
 * `Oracle JRE`_
 * `Postgresql`_
+* `Redis`_
 
 
 Usage
@@ -220,3 +221,4 @@ Or you can check out `my box`_ at Atlas.
 .. _Nginx: docs/nginx.rst
 .. _Oracle JRE: docs/oracle_jre.rst
 .. _Postgresql: docs/postgresql.rst
+.. _Redis: docs/redis.rst
