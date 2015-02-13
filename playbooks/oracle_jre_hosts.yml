@@ -1,0 +1,5 @@
+---
+- hosts: cassandra_nodes
+  sudo: yes
+  roles:
+    - oraclejre
