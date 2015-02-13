@@ -84,8 +84,13 @@ You can also set variables for specific host by creating file with name matching
 Role groups
 -----------
 
+* all
+
+  - perform Common_ role
+
 * cassandra_nodes
 
+  - perform `Oracle JRE`_ role
   - perform Cassandra_ role
 
 * postgresql_servers
@@ -93,8 +98,12 @@ Role groups
   - perform Postgresql_ role
   - open TCP port 5432 in iptables for ``postgresql_accept`` and ``postgresql_accept6`` lists
 
-* webservers
+* redis_servers
 
+  - perform Redis_ role
+
+* webservers
+  - perform Nginx_ role
   - open TCP ports 80,443 in iptables
 
 Run playbooks
@@ -108,8 +117,17 @@ To run playbook for all servers:
 
 Also you can run playbook on speciafied role group:
 
-* cassandra_nodes.yml
-* postgresql_servers.yml
++------------------------+--------------------+------------+
+| Playbook               | Groups             | Roles      |
++=============================================+============+
+| all_servers.yml        | all                | common     |
++------------------------+--------------------+------------+
+| cassandra_nodes.yml    | cassandra_nodes    | cassandra  |
++------------------------+--------------------+------------+
+| oracle_jre_hosts.yml   | cassandra_nodes    | oracle_jre |
++------------------------+--------------------+------------+
+| postgresql_servers.yml | postgresql_servers | postgresql |
++------------------------+--------------------+------------+
 
 
 Bootstrapping a server

@@ -1,5 +1,5 @@
 ---
-- hosts: postgresql_servers
+- hosts: redis_servers
   sudo: yes
   roles:
     - redis
