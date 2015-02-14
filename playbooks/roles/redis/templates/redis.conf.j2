@@ -122,9 +122,11 @@ databases 16
 #
 #   save ""
 
+{% if redis_save %}
 save 900 1
 save 300 10
 save 60 10000
+{% endif %}
 
 # By default Redis will stop accepting writes if RDB snapshots are enabled
 # (at least one save point) and the latest background save failed.
@@ -385,7 +387,9 @@ slave-priority 100
 # limit for maxmemory so that there is some free RAM on the system for slave
 # output buffers (but this is not needed if the policy is 'noeviction').
 #
-# maxmemory <bytes>
+{% if redis_maxmemory is defined %}
+maxmemory {{ redis_maxmemory }}
+{% endif %}
 
 # MAXMEMORY POLICY: how Redis will select what to remove when maxmemory
 # is reached. You can select among five behaviors:
@@ -408,7 +412,7 @@ slave-priority 100
 #
 # The default is:
 #
-# maxmemory-policy volatile-lru
+maxmemory-policy {{ redis_maxmemory_policy }}
 
 # LRU and minimal TTL algorithms are not precise algorithms but approximated
 # algorithms (in order to save memory), so you can select as well the sample
