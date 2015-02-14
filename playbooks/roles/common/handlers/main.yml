@@ -28,3 +28,6 @@
 
 - name: apply iptables rules
   command: /etc/network/if-pre-up.d/iptables
+
+- name: restart supervisord
+  service: name=supervisor state=restarted

@@ -10,3 +10,4 @@
 - include: mail.yml
 - include: sysctl.yml
 - include: iptables.yml
+- include: supervisord.yml
