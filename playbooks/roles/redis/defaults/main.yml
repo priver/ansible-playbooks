@@ -1,0 +1,3 @@
+---
+redis_save: yes
+redis_maxmemory_policy: volatile-lru

@@ -1,0 +1,65 @@
+# {{ ansible_managed }}
+upstream sentry {
+    server unix:/srv/www/{{ sentry_server_name }}/run/uwsgi.sock;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name {{ sentry_server_name }};
+
+    access_log /var/log/nginx/{{ sentry_server_name }}_access.log;
+    error_log /var/log/nginx/{{ sentry_server_name }}_error.log;
+
+{% if sentry_ssl %}
+    if ($request_method = GET) {
+        return 301 https://$host$request_uri;
+    }
+    return 405;
+}
+
+server {
+    listen 443 ssl spdy;
+    listen [::]:443 ssl spdy;
+
+    server_name {{ sentry_server_name }};
+
+    access_log /var/log/nginx/{{ sentry_server_name }}-ssl_access.log;
+    error_log /var/log/nginx/{{ sentry_server_name }}-ssl_error.log;
+
+    ssl_certificate /etc/ssl/localcerts/{{ sentry_server_name }}.chained.crt;
+    ssl_certificate_key /etc/ssl/localcerts/{{ sentry_server_name }}.key;
+
+    add_header Strict-Transport-Security "max-age=31536000";
+{% endif %}
+
+    # use very aggressive timeouts
+    proxy_read_timeout 5s;
+    proxy_send_timeout 5s;
+    send_timeout 5s;
+    resolver_timeout 5s;
+    client_body_timeout 5s;
+
+    # buffer larger messages
+    client_max_body_size 150k;
+    client_body_buffer_size 150k;
+
+    root /srv/www/{{ sentry_server_name }}/public;
+
+    location /_static/ {
+        expires 1y;
+    }
+
+    location /api/ {
+        # keepalive + raven.js is a disaster
+        keepalive_timeout 0;
+        uwsgi_pass sentry;
+        include uwsgi_params;
+    }
+
+    location / {
+        uwsgi_pass sentry;
+        include uwsgi_params;
+    }
+}

@@ -31,3 +31,6 @@
 
 - name: restart supervisord
   service: name=supervisor state=restarted
+
+- name: update supervisord
+  shell: supervisorctl update

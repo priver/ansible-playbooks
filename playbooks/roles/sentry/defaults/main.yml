@@ -1,0 +1,12 @@
+---
+sentry_server_email: sentry@{{ sentry_server_name }}
+sentry_ssl: no
+sentry_db_host: 127.0.0.1
+sentry_db_name: sentry
+sentry_db_password: sentry
+sentry_redis_host: 127.0.0.1
+sentry_redis_db: 0
+sentry_web_processes: 1
+sentry_web_threads: "{{ ansible_processor_vcpus }}"
+sentry_worker_processes: 1
+sentry_worker_concurrency: "{{ ansible_processor_vcpus }}"

@@ -16,6 +16,7 @@ Roles
 * `Oracle JRE`_
 * `Postgresql`_
 * `Redis`_
+* `Sentry`_
 
 
 Usage
@@ -240,3 +241,4 @@ Or you can check out `my box`_ at Atlas.
 .. _Oracle JRE: docs/oracle_jre.rst
 .. _Postgresql: docs/postgresql.rst
 .. _Redis: docs/redis.rst
+.. _Sentry: docs/sentry.rst

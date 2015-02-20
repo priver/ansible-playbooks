@@ -1,0 +1,86 @@
+---
+- name: install dependencies
+  apt: pkg={{ item }} state=present
+  with_items:
+    - python-dev
+    - libxslt1-dev
+    - libxml2-dev
+    - libffi-dev
+
+- name: install sentry
+  pip: name={{ item }} virtualenv=/srv/www/{{ sentry_server_name }}/env state=present
+  with_items:
+    - sentry[postgres]
+    - uwsgi
+  notify:
+    - upgrade sentry
+    - collect sentry static
+
+- name: add sentry user
+  user: name=sentry
+        comment=sentry
+        system=yes
+        createhome=no
+        home=/srv/www/{{ sentry_server_name }}/run
+        shell=/bin/false
+        state=present
+
+- name: make directories
+  file: path={{ item.path }}
+        owner={{ item.owner|default('root') }} group={{ item.owner|default('root') }} mode=755
+        state=directory
+  with_items:
+    - { path: "/srv/www/{{ sentry_server_name }}/settings" }
+    - { path: "/srv/www/{{ sentry_server_name }}/run", owner: sentry, group: sentry }
+    - { path: "/srv/www/{{ sentry_server_name }}/public/_static" }
+    - { path: "/var/log/uwsgi" }
+    - { path: "/var/log/celery" }
+
+- name: configure sentry
+  template: src=sentry.conf.py.j2
+            dest=/srv/www/{{ sentry_server_name }}/settings/sentry.conf.py
+            owner=root group=root mode=0644
+  notify:
+    - reload sentry web
+    - restart sentry worker
+    - restart sentry beat
+
+- name: configure supervisord
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=root group=root mode=0644
+  with_items:
+    - { src: supervisord_web.conf.j2, dest: "/etc/supervisor/conf.d/{{ sentry_server_name }}_web.conf" }
+    - { src: supervisord_worker.conf.j2, dest: "/etc/supervisor/conf.d/{{ sentry_server_name }}_worker.conf" }
+    - { src: supervisord_beat.conf.j2, dest: "/etc/supervisor/conf.d/{{ sentry_server_name }}_beat.conf" }
+  notify:
+    - update supervisord
+
+- name: copy ssl cert
+  copy: src={{ sentry_ssl_cert }}
+        dest=/etc/ssl/localcerts/{{ sentry_server_name }}.chained.crt
+        owner=root group=root mode=0644
+  when: sentry_ssl
+
+- name: copy ssl cert key
+  copy: src={{ sentry_ssl_key }}
+        dest=/etc/ssl/localcerts/{{ sentry_server_name }}.key
+        owner=root group=ssl-cert mode=0640
+  when: sentry_ssl
+
+- name: configure nginx virtual host
+  template: src=nginx_server.j2
+            dest=/etc/nginx/sites-available/{{ sentry_server_name }}
+            owner=root group=root mode=0644
+  notify:
+    - reload nginx
+
+- name: enable virtual hosts
+  file: src=/etc/nginx/sites-available/{{ sentry_server_name }}
+        dest=/etc/nginx/sites-enabled/{{ sentry_server_name }}
+        state=link
+  notify:
+    - reload nginx
+
+
+

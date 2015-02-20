@@ -22,7 +22,10 @@ server {
     error_log /var/log/nginx/{{ item.server_name }}_error.log;
 
 {% if item.ssl == 'only' %}
-    return 301 https://$host$request_uri;
+    if ($request_method = GET) {
+        return 301 https://$host$request_uri;
+    }
+    return 405;
 {% else %}
     {{ serve(item) }}
 {% endif %}
