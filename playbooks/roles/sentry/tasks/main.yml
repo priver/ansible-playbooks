@@ -5,6 +5,7 @@
     - python-dev
     - libxslt1-dev
     - libxml2-dev
+    - zlib1g-dev
     - libffi-dev
 
 - name: install sentry
@@ -23,6 +24,12 @@
         createhome=no
         home=/srv/www/{{ sentry_server_name }}/run
         shell=/bin/false
+        state=present
+
+- name: add nginx to sentry group
+  user: name=www-data
+        groups=sentry
+        append=yes
         state=present
 
 - name: make directories

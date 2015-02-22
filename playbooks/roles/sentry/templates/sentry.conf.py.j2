@@ -55,7 +55,7 @@ SENTRY_FILESTORE_OPTIONS = {
 }
 
 # Web Server
-SENTRY_URL_PREFIX = 'http://{{ sentry_server_name }}'
+SENTRY_URL_PREFIX = 'http{% if sentry_ssl %}s{% endif %}://{{ sentry_server_name }}'
 STAICFILES_DIRS = (os.path.realpath(os.path.join(PROJECT_ROOT, 'static')), )
 STATIC_ROOT = '/srv/www/{{ sentry_server_name }}/public/_static/'
 
@@ -68,12 +68,9 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 SERVER_EMAIL = '{{ sentry_server_email }}'
 
-# If you're using mailgun for inbound mail, set your API key and configure a
-# route to forward to /api/hooks/mailgun/inbound/
-MAILGUN_API_KEY = ''
-
 # etc.
 SECRET_KEY = '{{ sentry_secret_key }}'
+SENTRY_ADMIN_EMAIL = '{{ sentry_admin_email }}'
 
 # Auth
 SENTRY_ALLOW_REGISTRATION = False

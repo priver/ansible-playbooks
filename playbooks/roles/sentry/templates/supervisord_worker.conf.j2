@@ -15,3 +15,4 @@ user=sentry
 redirect_stderr=true
 stdout_logfile=/var/log/celery/{{ sentry_server_name }}_worker.log
 environment=SENTRY_CONF="/srv/www/{{ sentry_server_name }}/settings/sentry.conf.py"
+directory=/srv/www/{{ sentry_server_name }}/run/

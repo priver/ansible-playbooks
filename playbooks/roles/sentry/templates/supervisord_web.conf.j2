@@ -4,7 +4,7 @@ command=/srv/www/{{ sentry_server_name }}/env/bin/uwsgi
     --master
     --thunder-lock
     --socket=/srv/www/{{ sentry_server_name }}/run/uwsgi.sock
-    --chmod-socket=666
+    --chmod-socket=664
     --processes={{ sentry_web_processes }}
     --threads={{ sentry_web_threads }}
     --buffer-size=32768
@@ -24,3 +24,4 @@ user=sentry
 redirect_stderr=true
 stdout_logfile=/var/log/uwsgi/{{ sentry_server_name }}.log
 environment=SENTRY_CONF="/srv/www/{{ sentry_server_name }}/settings/sentry.conf.py"
+directory=/srv/www/{{ sentry_server_name }}/run/
