@@ -108,6 +108,7 @@ Role groups
   - perform Sentry_ role
 
 * webservers
+
   - perform Nginx_ role
   - open TCP ports 80,443 in iptables
 
