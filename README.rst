@@ -103,6 +103,10 @@ Role groups
 
   - perform Redis_ role
 
+* sentry_servers
+
+  - perform Sentry_ role
+
 * webservers
   - perform Nginx_ role
   - open TCP ports 80,443 in iptables
@@ -128,6 +132,12 @@ Also you can run playbook on speciafied role group:
 | oracle_jre_hosts.yml   | cassandra_nodes    | oracle_jre |
 +------------------------+--------------------+------------+
 | postgresql_servers.yml | postgresql_servers | postgresql |
++------------------------+--------------------+------------+
+| redis_servers.yml      | redis_servers      | redis      |
++------------------------+--------------------+------------+
+| sentry_servers.yml     | sentry_servers     | sentry     |
++------------------------+--------------------+------------+
+| webservers.yml         | webservers         | nginx      |
 +------------------------+--------------------+------------+
 
 
