@@ -6,6 +6,11 @@ Tasks
 =====
 
 * Installs and configures sentry server.
+  Note that you should manually create superuser:
+
+  .. code:: bash
+
+      $ /srv/www/sentry.example.com/env/bin/sentry --config=/srv/www/sentry.example.com/settings/sentry.conf.py createuser
 
 
 Variables
