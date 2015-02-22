@@ -125,7 +125,7 @@ Also you can run playbook on speciafied role group:
 
 +------------------------+--------------------+------------+
 | Playbook               | Groups             | Roles      |
-+=============================================+============+
++========================+====================+============+
 | all_servers.yml        | all                | common     |
 +------------------------+--------------------+------------+
 | cassandra_nodes.yml    | cassandra_nodes    | cassandra  |
