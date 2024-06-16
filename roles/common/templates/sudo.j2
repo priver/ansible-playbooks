@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+Defaults:%sudo env_keep += "HOME EDITOR EMAIL DEBEMAIL DEBFULLNAME SSH_AGENT_PID SSH_AUTH_SOCK SSH_TTY"
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) NOPASSWD: SETENV: ALL

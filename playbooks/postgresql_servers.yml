@@ -1,5 +1,0 @@
----
-- hosts: postgresql_servers
-  sudo: yes
-  roles:
-    - postgresql

@@ -1,3 +1,0 @@
----
-nginx_sendfile: "on"
-nginx_static_servers: []
