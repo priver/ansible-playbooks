@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+[Time]
+NTP={{ common_ntp_servers|join(' ') }}
+FallbackNTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org
+RootDistanceMaxSec=5
+PollIntervalMinSec=32
+PollIntervalMaxSec=2048
+ConnectionRetrySec=30
+SaveIntervalSec=60

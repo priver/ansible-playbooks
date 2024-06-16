@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+AuthorizedKeysFile .ssh/authorized_keys
+KbdInteractiveAuthentication no
+PasswordAuthentication no
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server
+AllowGroups users

@@ -1,0 +1,20 @@
+[do-docker]
+do1.example.com
+
+[yc-docker]
+yc1.example.com
+
+## Location groups
+[do:children]
+do-docker
+
+[yc:children]
+yc-docker
+
+[yc:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+## Role groups
+[docker:children]
+do-docker
+yc-docker

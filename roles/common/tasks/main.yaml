@@ -1,0 +1,165 @@
+---
+- name: Set to generate locales
+  ansible.builtin.debconf:
+    name: locales
+    question: locales/locales_to_be_generated
+    value: "{{ common_locales }}"
+    vtype: multiselect
+  notify:
+    - Reconfigure locales
+
+- name: Set default locale to None
+  ansible.builtin.debconf:
+    name: locales
+    question: locales/default_environment_locale
+    value: None
+    vtype: select
+  notify:
+    - Reconfigure locales
+
+- name: Unintstall packages
+  ansible.builtin.apt:
+    pkg:
+      - ntp
+      - ntpsec
+    state: absent
+
+- name: Update package index and install packages
+  ansible.builtin.apt:
+    pkg:
+      - bat
+      - build-essential
+      - fd-find
+      - git
+      - mc
+      - ripgrep
+      - systemd-timesyncd
+      - zsh
+    update_cache: true
+    state: present
+
+- name: Symlink bat
+  ansible.builtin.file:
+    src: /usr/bin/batcat
+    dest: /usr/local/bin/bat
+    state: link
+
+- name: Symlink fd
+  ansible.builtin.file:
+    src: /usr/bin/fdfind
+    dest: /usr/local/bin/fd
+    state: link
+
+- name: Remove ntpd config
+  ansible.builtin.file:
+    path: /etc/ntpsec
+    state: absent
+
+- name: Configure timesyncd
+  ansible.builtin.template:
+    src: timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart timesyncd
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ common_timezone }}"
+  notify:
+    - Reconfigure tzdata
+    - Restart cron
+
+- name: Add users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    comment: "{{ item.gecos }}"
+    groups: >-
+      {{
+        ['adm', 'systemd-journal', 'users']
+          | union(item.sudo | default(false) | ternary(['sudo'], []))
+      }}
+    password: "*"
+    shell: "{{ item.shell | default('/bin/bash') }}"
+    state: present
+  loop: "{{ common_users | selectattr('active', 'true') }}"
+
+- name: Update dotfiles
+  ansible.builtin.git:
+    repo: https://github.com/{{ item.github_name | default(item.name) }}/{{ item.dotfiles_repo | default('dotfiles') }}.git
+    version: "{{ item.dotfiles_version }}"
+    dest: /home/{{ item.name }}/.dotfiles
+  become: true
+  become_user: "{{ item.name }}"
+  register: dotfiles
+  loop: "{{ common_users | selectattr('active', 'true') }}"
+  when: "'dotfiles_version' in item"
+  notify: Make dotfiles
+
+- name: Add authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    key: https://github.com/{{ item.name }}.keys
+    exclusive: true
+    state: present
+  loop: "{{ common_users | selectattr('active', 'true') }}"
+
+- name: Get all users
+  ansible.builtin.getent:
+    database: group
+    key: users
+    split: ":"
+
+- name: Deactive unknown users
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: []
+    password: "!"
+    state: present
+  loop: >-
+    {{
+      ansible_facts.getent_group.users[2]
+        | split(',')
+        | difference(common_users | selectattr('active', 'true') | map(attribute='name'))
+    }}
+
+- name: Configure sudo for sudo group
+  ansible.builtin.template:
+    src: sudo.j2
+    dest: /etc/sudoers.d/sudo
+    owner: root
+    group: root
+    mode: "0440"
+    validate: visudo -cf %s
+
+- name: Remove cloud-init files
+  ansible.builtin.file:
+    path: /etc/sudoers.d/90-cloud-init-users
+    state: absent
+
+- name: Remove sshd_config.d
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d
+    state: absent
+
+- name: Configure ssh
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart ssh
+
+- name: Configure nftables
+  ansible.builtin.template:
+    src: nftables.conf.j2
+    dest: /etc/nftables.conf
+    owner: root
+    group: root
+    mode: "0755"
+  notify:
+    - Restart nftables

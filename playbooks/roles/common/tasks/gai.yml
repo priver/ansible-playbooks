@@ -1,5 +1,0 @@
----
-- name: configure getaddrinfo
-  template: src=gai/gai.conf.j2
-            dest=/etc/gai.conf
-            owner=root group=root mode=0644

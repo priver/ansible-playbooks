@@ -1,8 +1,0 @@
----
-- include: all_servers.yml
-- include: oracle_jre_hosts.yml
-- include: postgresql_servers.yml
-- include: cassandra_nodes.yml
-- include: redis_servers.yml
-- include: webservers.yml
-- include: sentry_servers.yml

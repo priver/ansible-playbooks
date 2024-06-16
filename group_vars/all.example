@@ -1,0 +1,15 @@
+---
+# common
+common_locales:
+  - en_US.UTF-8 UTF-8
+  - ru_RU.UTF-8 UTF-8
+common_timezone: Europe/Moscow
+common_ntp_servers:
+  - time.cloudflare.com
+common_users:
+  - name: someuser
+    gecos: Some User
+    shell: /usr/bin/zsh
+    dotfiles_version: b0fc3ec87c9fb0031bece8eed1ff16aaa189aa6d
+    sudo: true
+    active: true

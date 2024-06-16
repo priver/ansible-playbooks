@@ -1,0 +1,6 @@
+---
+- name: Perform all roles
+  hosts: all
+  become: true
+  roles:
+    - common

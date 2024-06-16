@@ -1,5 +1,0 @@
----
-- hosts: webservers
-  sudo: yes
-  roles:
-    - nginx

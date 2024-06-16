@@ -1,5 +1,0 @@
----
-- hosts: sentry_servers
-  sudo: yes
-  roles:
-    - sentry

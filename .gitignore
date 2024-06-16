@@ -1,14 +1,18 @@
+# inventories
+inventories/*
+!inventories/hosts.example
+
+# vars
+group_vars/*
+!group_vars/all.example
+!group_vars/yandexcloud.example
+
+# python cache
 __pycache__/
-*.py[cod]
+.mypy_cache/
 
+# logs
 *.log
-pip-log.txt
 
-.vagrant/
-
-playbooks/test.yml
-playbooks/roles/*/tmp
-
-*.sublime-project
-*.sublime-workspace
+# misc
 .DS_Store

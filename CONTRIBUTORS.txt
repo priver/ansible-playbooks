@@ -1,1 +1,1 @@
-Mikhail Priver
+https://github.com/priver/ansible-playbooks/contributors
