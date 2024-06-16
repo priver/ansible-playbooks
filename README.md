@@ -19,13 +19,13 @@ To start using playbooks, first of all you need to create ansible inventory file
 
 ## Servers
 # here you define your hosts
-# group names should be [location_name-role_name]
-[do-docker]
+# group names should be [location_role]
+[do_docker]
 do1.example.com
 do2.example.com
 do3.example.com
 
-[yc-docker]
+[yc_docker]
 yc1.example.com
 yc2.example.com
 yc3.example.com
@@ -34,17 +34,17 @@ yc3.example.com
 # here you specify location groups
 # special configuration options may apply to each location
 [do:children]
-do-docker
+do_docker
 
 [yc:children]
-yc-docker
+yc_docker
 
 ## Role groups
 # here you specify role groups
 # roles are performing depending on this groups
 [docker:children]
-do-docker
-yc-docker
+do_docker
+yc_docker
 ```
 
 ### Variables
@@ -52,7 +52,7 @@ yc-docker
 Group variables are stored in _group_vars_ directory
 
 - _all_: variables applied to all hosts
-- _location_name_: variables applied to specific location
+- _location_: variables applied to specific location
 
 You can also set variables for specific host by creating file with name matching servers' hostname
 in _host_vars_ directory.

@@ -4,164 +4,32 @@
 flush ruleset
 
 table inet filter {
+  chain input_ipv4 {
+    icmp type echo-request limit rate 10/second burst 4 packets accept
+  }
+
+  chain input_ipv6 {
+    icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } accept
+    icmpv6 type echo-request limit rate 10/second burst 4 packets accept
+  }
+
   chain input {
-    type filter hook input priority filter;
+    type filter hook input priority filter; policy drop;
+
+    iifname lo accept
+
+    ct state vmap { established : accept, related : accept, invalid : drop }
+
+    meta protocol vmap { ip : jump input_ipv4, ip6 : jump input_ipv6 }
+
+    tcp dport ssh ct state new limit rate 15/minute accept
   }
 
   chain forward {
-    type filter hook forward priority filter;
+    type filter hook forward priority filter; policy drop;
   }
 
   chain output {
-    type filter hook output priority filter;
+    type filter hook output priority filter; policy accept;
   }
 }
-
-{#
-PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
-IPT=/sbin/iptables
-IP6T=/sbin/ip6tables
-IPSET=/usr/sbin/ipset
-
-${IPT} -F
-${IPT} -X
-${IPT} -t nat -F
-${IPT} -t nat -X
-${IPT} -t mangle -F
-${IPT} -t mangle -X
-${IPT} -P INPUT ACCEPT
-${IPT} -P OUTPUT ACCEPT
-${IPT} -P FORWARD ACCEPT
-
-${IP6T} -F
-${IP6T} -X
-${IP6T} -t mangle -F
-${IP6T} -t mangle -X
-${IP6T} -P INPUT ACCEPT
-${IP6T} -P OUTPUT ACCEPT
-${IP6T} -P FORWARD ACCEPT
-
-${IPT} -N TCP
-${IPT} -N UDP
-${IP6T} -N TCP
-${IP6T} -N UDP
-
-
-# IP SETS
-
-# ssh
-{% if ssh_accept is defined %}
-${IPSET} destroy ssh_accept -q
-${IPSET} create ssh_accept hash:ip family inet hashsize {{ ssh_accept|count|ceil2(64) }} maxelem {{ ssh_accept|count }}
-{% for addr in ssh_accept %}
-${IPSET} add ssh_accept {{ addr }}
-{% endfor %}
-{% endif %}
-{% if ssh_accept6 is defined %}
-${IPSET} destroy ssh_accept6 -q
-${IPSET} create ssh_accept6 hash:ip family inet6 hashsize {{ ssh_accept6|count|ceil2(64) }} maxelem {{ ssh_accept6|count }}
-{% for addr in ssh_accept6 %}
-${IPSET} add ssh_accept6 {{ addr }}
-{% endfor %}
-{% endif %}
-
-{% if 'postgresql_servers' in groups and inventory_hostname in groups['postgresql_servers'] %}
-# postgresql
-{% if postgresql_accept is defined %}
-${IPSET} destroy postgresql_accept -q
-${IPSET} create postgresql_accept hash:ip family inet hashsize {{ postgresql_accept|count|ceil2(64) }} maxelem {{ postgresql_accept|count }}
-{% for addr in postgresql_accept %}
-${IPSET} add postgresql_accept {{ addr }}
-{% endfor %}
-{% endif %}
-{% if postgresql_accept6 is defined %}
-${IPSET} destroy postgresql_accept6 -q
-${IPSET} create postgresql_accept6 hash:ip family inet6 hashsize {{ postgresql_accept6|count|ceil2(64) }} maxelem {{ postgresql_accept6|count }}
-{% for addr in postgresql_accept6 %}
-${IPSET} add postgresql_accept6 {{ addr }}
-{% endfor %}
-{% endif %}
-{% endif %}
-
-
-# INPUT
-
-# localhost
-${IPT} -A INPUT -i lo -j ACCEPT
-${IP6T} -A INPUT -i lo -j ACCEPT
-
-# ipv6 ndp
-${IP6T} -A INPUT -p icmpv6 --icmpv6-type 135 -m hl --hl-eq 255 -j ACCEPT
-${IP6T} -A INPUT -p icmpv6 --icmpv6-type 136 -m hl --hl-eq 255 -j ACCEPT
-
-# related,established
-${IPT} -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-${IP6T} -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-
-# invalid
-${IPT} -A INPUT -m conntrack --ctstate INVALID -j DROP
-${IP6T} -A INPUT -m conntrack --ctstate INVALID -j DROP
-
-# icmp
-${IPT} -A INPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
-${IP6T} -A INPUT -p icmpv6 --icmpv6-type 128 -m conntrack --ctstate NEW -j ACCEPT
-
-# to open chains
-${IPT} -A INPUT -p udp -m conntrack --ctstate NEW -j UDP
-${IPT} -A INPUT -p tcp --syn -m conntrack --ctstate NEW -j TCP
-${IP6T} -A INPUT -p udp -m conntrack --ctstate NEW -j UDP
-${IP6T} -A INPUT -p tcp --syn -m conntrack --ctstate NEW -j TCP
-
-# rejects
-${IPT} -A INPUT -p tcp -j REJECT --reject-with tcp-reset
-${IPT} -A INPUT -j REJECT --reject-with icmp-port-unreachable
-
-${IP6T} -A INPUT -p tcp -j REJECT --reject-with tcp-reset
-${IP6T} -A INPUT -j REJECT --reject-with icmp6-port-unreachable
-
-
-# OPEN CHAINS
-{% if 'webservers' in groups and inventory_hostname in groups['webservers'] %}
-
-# www
-${IPT} -A TCP -p tcp -m multiport --dports 80,443 -j ACCEPT
-${IP6T} -A TCP -p tcp -m multiport --dports 80,443 -j ACCEPT
-{% endif %}
-{% if 'postgresql_servers' in groups and inventory_hostname in groups['postgresql_servers'] %}
-
-# postgresql
-{% if postgresql_accept is defined %}
-${IPT} -A TCP -p tcp --dport 5432 -m set --match-set postgresql_accept src -j ACCEPT
-{% endif %}
-{% if postgresql_accept6 is defined %}
-${IP6T} -A TCP -p tcp --dport 5432 -m set --match-set postgresql_accept6 src -j ACCEPT
-{% endif %}
-{% endif %}
-
-# ssh
-{% if ssh_accept is defined %}
-${IPT} -A TCP -p tcp --dport 22 -m set --match-set ssh_accept src -j ACCEPT
-{% endif %}
-${IPT} -A TCP -p tcp --dport 22 -m recent --set --name ssh --rsource
-${IPT} -A TCP -p tcp --dport 22 -m recent ! --rcheck --seconds 1800 --hitcount 4 --name ssh --rsource -j ACCEPT
-{% if ssh_accept6 is defined %}
-${IP6T} -A TCP -p tcp --dport 22 -m set --match-set ssh_accept6 src -j ACCEPT
-{% endif %}
-${IP6T} -A TCP -p tcp --dport 22 -m recent --set --name ssh --rsource
-${IP6T} -A TCP -p tcp --dport 22 -m recent ! --rcheck --seconds 1800 --hitcount 4 --name ssh --rsource -j ACCEPT
-
-
-# FORWARD
-
-${IPT} -A FORWARD -p tcp -j REJECT --reject-with tcp-reset
-${IPT} -A FORWARD -j REJECT --reject-with icmp-port-unreachable
-
-${IP6T} -A FORWARD -p tcp -j REJECT --reject-with tcp-reset
-${IP6T} -A FORWARD -j REJECT --reject-with icmp6-port-unreachable
-
-
-# OUTPUT
-
-${IPT} -A OUTPUT -j ACCEPT
-${IP6T} -A OUTPUT -j ACCEPT #}
