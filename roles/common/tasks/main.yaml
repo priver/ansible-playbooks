@@ -34,6 +34,7 @@
       - mc
       - ripgrep
       - systemd-timesyncd
+      - traceroute
       - zsh
     update_cache: true
     state: present
@@ -163,3 +164,20 @@
     mode: "0755"
   notify:
     - Restart nftables
+
+- name: Empty sysctl.conf file
+  ansible.builtin.template:
+    src: sysctl.conf.j2
+    dest: /etc/sysctl.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create sysctl.d file
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/local.conf
+    content: ""
+    force: false
+    owner: root
+    group: root
+    mode: "0644"

@@ -1,20 +1,27 @@
-[do_docker]
-do1.example.com
+[do_podman]
+do2.example.com
 
-[yc_docker]
+[yc_ap]
 yc1.example.com
+
+[yc_podman]
+yc2.ru-central1.internal
 
 ## Location groups
 [do:children]
-do_docker
+do_podman
 
 [yc:children]
-yc_docker
+yc_ap
+yc_podman
 
 [yc:vars]
 ansible_python_interpreter=/usr/bin/python3
 
 ## Role groups
-[docker:children]
-do_docker
-yc_docker
+[ap:children]
+yc_ap
+
+[podman:children]
+do_podman
+yc_podman
