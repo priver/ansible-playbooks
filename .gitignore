@@ -4,8 +4,7 @@ inventories/*
 
 # vars
 group_vars/*
-!group_vars/all.example
-!group_vars/yandexcloud.example
+!group_vars/*.example
 
 # python cache
 __pycache__/
