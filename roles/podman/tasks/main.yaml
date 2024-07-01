@@ -1,0 +1,10 @@
+---
+- name: Install podman
+  ansible.builtin.apt:
+    pkg:
+      - podman
+      - crun
+      - slirp4netns
+    state: present
+  tags:
+    - podman

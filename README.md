@@ -5,6 +5,7 @@ Collection of [ansible] playbooks for Debian Bookworm.
 ## Roles
 
 - [Common]
+- [Podman]
 
 ## Usage
 
@@ -62,11 +63,6 @@ Group variables are stored in _group_vars_ directory
 You can also set variables for specific host by creating file with name matching servers' hostname
 in _host_vars_ directory.
 
-### Role groups
-
-- all
-  - perform [Common] role
-
 ### Run playbooks
 
 To run playbook for all servers:
@@ -75,6 +71,14 @@ To run playbook for all servers:
 ansible-playbook site.yml
 ```
 
+Also you can run playbook on speciafied role group:
+
+| Playbook      | Group    | Roles              |
+| ------------- | -------- | ------------------ |
+| `ap.yaml`     | `ap`     | [Common]           |
+| `podman.yaml` | `podman` | [Common], [Podman] |
+
 [ansible]: http://docs.ansible.com
-[Sample Ansible setup]: https://docs.ansible.com/ansible/latest/tips_tricks/sample_setup.html
 [Common]: docs/common.md
+[Podman]: docs/podman.md
+[Sample Ansible setup]: https://docs.ansible.com/ansible/latest/tips_tricks/sample_setup.html

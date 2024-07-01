@@ -1,0 +1,7 @@
+---
+- name: Perform common and podman roles on podman hosts
+  hosts: podman
+  become: true
+  roles:
+    - common
+    - podman

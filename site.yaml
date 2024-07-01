@@ -1,6 +1,5 @@
 ---
-- name: Perform all roles
-  hosts: all
-  become: true
-  roles:
-    - common
+- name: Import access point playbook
+  import_playbook: ap.yaml
+- name: Import podman servers playbook
+  import_playbook: podman.yaml

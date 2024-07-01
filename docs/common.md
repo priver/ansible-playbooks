@@ -2,16 +2,17 @@
 
 ## Tasks
 
-- Generate locales and unset default locale.
-- Install essential packages.
-- Set timezone.
-- Configure time syncronization with `timesyncd`.
-- Create users and fetch their `autorized_keys` form GitHub.
-- Clone user's dotfiles to `.dotfiles` directory and execute `make` if available.
-- Revoke system access for deactivated users.
-- Configure passwordless sudo for members of the `sudo` group.
-- Set up OpenSSH server.
-- Configure `nftables` rules.
+- Generate locales and unset default locale (tag: `locales`).
+- Install essential packages (tag: `packages`).
+- Configure time syncronization with `timesyncd` and set timezone (tag: `time`).
+- Create users, fetch their `autorized_keys` form GitHub and revoke system
+  access for deactivated users; also clone user's dotfiles to `.dotfiles`
+  directory and execute `make` if available (tag: `users`).
+- Configure passwordless sudo for members of the `sudo` group (tag: `sudo`).
+- Set up OpenSSH server (tag: `ssh`).
+- Configure `nftables` rules (tag: `firewall`).
+- Empty `/etc/sysctl.conf` and create `/etc/sysctl.d/local.conf` for future
+  modifications (tag: `sysctl`).
 
 ## Variables
 
