@@ -1,5 +1,5 @@
 ---
-- name: Perform common role on access points
+- name: Perform common role on access point servers
   hosts: ap
   become: true
   roles:

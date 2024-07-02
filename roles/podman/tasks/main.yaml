@@ -4,7 +4,6 @@
     pkg:
       - podman
       - crun
-      - slirp4netns
     state: present
   tags:
     - podman
