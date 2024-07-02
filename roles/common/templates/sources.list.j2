@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+
+deb {{ common_apt_repo_url }} bookworm main non-free-firmware
+deb-src {{ common_apt_repo_url }} bookworm main non-free-firmware
+
+deb http://security.debian.org/debian-security/ bookworm-security main non-free-firmware
+deb-src http://security.debian.org/debian-security/ bookworm-security main non-free-firmware
+
+deb {{ common_apt_repo_url }} bookworm-updates main non-free-firmware
+deb-src {{ common_apt_repo_url }} bookworm-updates main non-free-firmware
+
+deb {{ common_apt_repo_url }} bookworm-backports main non-free-firmware
+deb-src {{ common_apt_repo_url }} bookworm-backports main non-free-firmware

@@ -1,5 +1,6 @@
 ---
+common_apt_repo_url: http://deb.debian.org/debian
 common_locales:
   - en_US.UTF-8 UTF-8
-common_timezone: Etc/UTC
 common_ntp_servers: []
+common_timezone: Etc/UTC
