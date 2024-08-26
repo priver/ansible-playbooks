@@ -1,0 +1,7 @@
+---
+- name: Perform common and xray roles on xray hosts
+  hosts: xray
+  become: true
+  roles:
+    - common
+    - xray

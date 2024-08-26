@@ -6,6 +6,7 @@ Collection of [ansible] playbooks for Debian Bookworm.
 
 - [Common]
 - [Podman]
+- [Xray]
 
 ## Usage
 
@@ -77,8 +78,10 @@ Also you can run playbook on speciafied role group:
 | ------------- | -------- | ------------------ |
 | `ap.yaml`     | `ap`     | [Common]           |
 | `podman.yaml` | `podman` | [Common], [Podman] |
+| `xray.yaml`   | `xray`   | [Common], [Xray]   |
 
 [ansible]: http://docs.ansible.com
 [Common]: docs/common.md
 [Podman]: docs/podman.md
+[Xray]: docs/xray.md
 [Sample Ansible setup]: https://docs.ansible.com/ansible/latest/tips_tricks/sample_setup.html
