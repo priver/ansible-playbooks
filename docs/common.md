@@ -2,6 +2,7 @@
 
 ## Tasks
 
+- Configure DNS resolver (tag: `dns`).
 - Generate locales and unset default locale (tag: `locales`).
 - Configure APT and install essential packages (tag: `packages`).
 - Configure time syncronization with `timesyncd` and set timezone (tag: `time`).
@@ -16,13 +17,15 @@
 
 ## Variables
 
-| Variable              | Required | Default                        | Description                                           |
-| --------------------- | -------- | ------------------------------ | ----------------------------------------------------- |
-| `common_apt_repo_url` | no       | `http://deb.debian.org/debian` | URL of APT repository                                 |
-| `common_locales`      | no       | `[en_US.UTF-8 UTF-8]`          | List of locales                                       |
-| `common_ntp_servers`  | no       | `[]`                           | List of NTP servers                                   |
-| `common_timezone`     | no       | `Etc/UTC`                      | Timezone                                              |
-| `common_users`        | yes      | —                              | See [`common_users` variable](#common_users-variable) |
+| Variable                | Required | Default                        | Description                                           |
+| ----------------------- | -------- | ------------------------------ | ----------------------------------------------------- |
+| `common_apt_repo_url`   | no       | `http://deb.debian.org/debian` | URL of APT repository                                 |
+| `common_locales`        | no       | `[en_US.UTF-8 UTF-8]`          | List of locales                                       |
+| `common_nameservers`    | no       | Cloudflare 1.1.1.1             | List of nameservers                                   |
+| `common_ntp_servers`    | no       | `[]`                           | List of NTP servers                                   |
+| `common_search_domains` | no       | —                              | List of additional DNS search domains                 |
+| `common_timezone`       | no       | `Etc/UTC`                      | Timezone                                              |
+| `common_users`          | yes      | —                              | See [`common_users` variable](#common_users-variable) |
 
 ### `common_users` variable
 
