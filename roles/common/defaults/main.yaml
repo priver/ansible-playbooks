@@ -9,4 +9,5 @@ common_nameservers:
   - "2606:4700:4700::1001"
 common_ntp_servers: []
 common_search_domains: []
+common_ssh_port: 22
 common_timezone: Etc/UTC
