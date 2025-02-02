@@ -2,13 +2,13 @@
 
 ## Tasks
 
-- Instal and configure Xray (tag: `xray`).
+- Install and configure Xray (tag: `xray`).
 
 ## Variables
 
 | Variable              | Required | Default     | Description                           |
 | --------------------- | -------- | ----------- | ------------------------------------- |
-| `xray_version`        | no       | `1.8.23`    | Version of Xray binary                |
+| `xray_version`        | no       | `25.1.30`   | Version of Xray binary                |
 | `xray_platform`       | no       | `linux-64`  | Platform of Xray binary               |
 | `xray_path`           | no       | `/opt/xray` | Path where Xray will be installed     |
 | `xray_short_id`       | yes      | —           | Generate with `openssl rand -hex 8`   |
