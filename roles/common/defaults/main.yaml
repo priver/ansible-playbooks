@@ -8,4 +8,5 @@ common_nameservers:
   - "2606:4700:4700::1111"
   - "2606:4700:4700::1001"
 common_ntp_servers: []
+common_search_domains: []
 common_timezone: Etc/UTC
