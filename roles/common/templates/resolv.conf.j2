@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+domain {{ ansible_domain }}
+search {{ ansible_domain }}.{% for search in common_search_domains %} {{ search }}.{% endfor %}
+
+{% for nameserver in common_nameservers %}
+nameserver {{ nameserver }}
+{% endfor %}
