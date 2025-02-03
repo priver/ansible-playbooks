@@ -55,10 +55,12 @@
     pkg:
       - bat
       - build-essential
+      - curl
       - fd-find
       - git
       - mc
       - ripgrep
+      - sudo
       - traceroute
       - zsh
     update_cache: true
@@ -277,3 +279,14 @@
     mode: "0644"
   tags:
     - sysctl
+
+# --------------------------------------------------------------------------------------------------
+# ansible
+# --------------------------------------------------------------------------------------------------
+- name: Create directory for ansible custom facts
+  ansible.builtin.file:
+    path: /etc/ansible/facts.d
+    recurse: true
+    state: directory
+  tags:
+    - ansible

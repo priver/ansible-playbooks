@@ -1,0 +1,92 @@
+// {{ ansible_managed }}
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "dokodemo-in",
+      "port": 443,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1",
+        "port": 4431,
+        "network": "tcp"
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["tls"],
+        "routeOnly": true
+      }
+    },
+    {
+      "tag": "vless-in",
+      "listen": "127.0.0.1",
+      "port": 4431,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "{{ xray_uuid }}",
+            "flow": "xtls-rprx-vision"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "dest": "{{ xray_reality_dest }}:443",
+          "serverNames": ["{{ xray_reality_dest }}"],
+          "privateKey": "{{ xray_x25519_private }}",
+          "shortIds": [""]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"],
+        "routeOnly": true
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "inboundTag": ["dokodemo-in"],
+        "domain": ["{{ xray_reality_dest }}"],
+        "outboundTag": "direct"
+      },
+      {
+        "inboundTag": ["dokodemo-in"],
+        "outboundTag": "block"
+      },
+      {
+        "inboundTag": ["vless-in"],
+        "ip": ["geoip:ru"],
+        "outboundTag": "block"
+      },
+      {
+        "inboundTag": ["vless-in"],
+        "domain": ["regexp:.*\\.ru$"],
+        "outboundTag": "block"
+      },
+      {
+        "inboundTag": ["vless-in"],
+        "protocol": ["bittorrent"],
+        "outboundTag": "block"
+      }
+    ],
+    "domainStrategy": "IPIfNonMatch"
+  }
+}

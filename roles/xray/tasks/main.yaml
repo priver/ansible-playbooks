@@ -1,0 +1,80 @@
+---
+- name: Create Xray directory
+  ansible.builtin.file:
+    path: "{{ xray_path }}"
+    state: directory
+    mode: "0755"
+  tags:
+    - xray
+
+- name: Download Xray binaries
+  ansible.builtin.unarchive:
+    src: https://github.com/XTLS/Xray-core/releases/download/v{{ xray_version }}/Xray-{{ xray_platform }}.zip
+    dest: /opt/xray
+    remote_src: true
+    creates: "{{ (ansible_local.xray.general.version | default('') == xray_version) | ternary((xray_path, 'xray') | path_join, None) }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart Xray
+  tags:
+    - xray
+
+- name: Install Xray fact
+  ansible.builtin.template:
+    src: xray.fact.j2
+    dest: /etc/ansible/facts.d/xray.fact
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - xray
+
+- name: Make Xray binary executable
+  ansible.builtin.file:
+    path: "{{ (xray_path, 'xray') | path_join }}"
+    mode: "0755"
+  tags:
+    - xray
+
+- name: Write Xray config
+  ansible.builtin.template:
+    src: config.jsonc.j2
+    dest: "{{ (xray_path, 'config.jsonc') | path_join }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Xray
+  tags:
+    - xray
+
+- name: Write Xray links
+  ansible.builtin.template:
+    src: links.txt.j2
+    dest: "{{ (xray_path, 'links.txt') | path_join }}"
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - xray
+
+- name: Update systemd service config
+  ansible.builtin.template:
+    src: xray.service.j2
+    dest: /etc/systemd/system/xray.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+  tags:
+    - xray
+
+- name: Enable and start Xray service
+  ansible.builtin.systemd:
+    name: xray
+    enabled: true
+    state: started
+  tags:
+    - xray

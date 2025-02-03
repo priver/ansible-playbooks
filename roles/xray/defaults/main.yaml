@@ -1,0 +1,4 @@
+---
+xray_version: "25.1.30"
+xray_platform: linux-64
+xray_path: /opt/xray
