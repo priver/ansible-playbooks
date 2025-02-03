@@ -1,13 +1,15 @@
 ---
-common_apt_repo_url: http://deb.debian.org/debian
-common_locales:
-  - en_US.UTF-8 UTF-8
 common_nameservers:
   - "1.1.1.1"
   - "1.0.0.1"
   - "2606:4700:4700::1111"
   - "2606:4700:4700::1001"
-common_ntp_servers: []
 common_search_domains: []
-common_ssh_port: 22
+common_locales:
+  - en_US.UTF-8 UTF-8
+common_apt_repo_url: http://deb.debian.org/debian
+common_ntp_servers: []
 common_timezone: Etc/UTC
+common_ssh_port: 22
+common_open_http: false
+common_open_https: false

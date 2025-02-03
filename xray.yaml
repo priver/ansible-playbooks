@@ -2,6 +2,8 @@
 - name: Perform common and xray roles on xray hosts
   hosts: xray
   become: true
+  vars:
+    common_open_https: true
   roles:
     - common
     - xray

@@ -1,10 +1,9 @@
 # inventories
-inventories/*
-!inventories/hosts.example
+/inventories
 
 # vars
-group_vars/*
-!group_vars/*.example
+/group_vars
+/host_vars
 
 # python cache
 __pycache__/
