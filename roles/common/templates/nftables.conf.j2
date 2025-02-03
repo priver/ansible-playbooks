@@ -14,7 +14,14 @@ table inet filter {
     meta l4proto icmp accept
     meta l4proto ipv6-icmp accept
 
-    tcp dport ssh accept
+    tcp dport {{ common_ssh_port }} accept
+
+{% if common_open_http %}
+    tcp dport 80 accept
+{% endif %}
+{% if common_open_https %}
+    tcp dport 443 accept
+{% endif %}
   }
 
   chain forward {
