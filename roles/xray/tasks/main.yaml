@@ -40,12 +40,22 @@
 
 - name: Write Xray config
   ansible.builtin.template:
-    src: config.json.j2
-    dest: "{{ (xray_path, 'config.json') | path_join }}"
+    src: config.jsonc.j2
+    dest: "{{ (xray_path, 'config.jsonc') | path_join }}"
     owner: root
     group: root
     mode: "0644"
   notify: Restart Xray
+  tags:
+    - xray
+
+- name: Write Xray links
+  ansible.builtin.template:
+    src: links.txt.j2
+    dest: "{{ (xray_path, 'links.txt') | path_join }}"
+    owner: root
+    group: root
+    mode: "0644"
   tags:
     - xray
 

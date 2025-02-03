@@ -36,3 +36,7 @@
   changed_when: true
   when: item is changed
   loop: "{{ dotfiles.results }}"
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true

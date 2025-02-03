@@ -6,7 +6,7 @@ Documentation=https://github.com/xtls
 After=network.target nss-lookup.target
 
 [Service]
-ExecStart=/opt/xray/xray run -config /opt/xray/config.json
+ExecStart=/opt/xray/xray run -config /opt/xray/config.jsonc
 Restart=on-failure
 RestartPreventExitStatus=23
 LimitNPROC=10000

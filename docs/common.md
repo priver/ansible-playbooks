@@ -19,11 +19,11 @@
 
 | Variable                | Required | Default                        | Description                                           |
 | ----------------------- | -------- | ------------------------------ | ----------------------------------------------------- |
+| `common_nameservers`    | no       | Cloudflare 1.1.1.1             | List of nameservers                                   |
+| `common_search_domains` | no       | `[]`                           | List of additional DNS search domains                 |
 | `common_apt_repo_url`   | no       | `http://deb.debian.org/debian` | URL of APT repository                                 |
 | `common_locales`        | no       | `[en_US.UTF-8 UTF-8]`          | List of locales                                       |
-| `common_nameservers`    | no       | Cloudflare 1.1.1.1             | List of nameservers                                   |
 | `common_ntp_servers`    | no       | `[]`                           | List of NTP servers                                   |
-| `common_search_domains` | no       | `[]`                           | List of additional DNS search domains                 |
 | `common_ssh_port`       | no       | 22                             | SSH server port                                       |
 | `common_timezone`       | no       | `Etc/UTC`                      | Timezone                                              |
 | `common_users`          | yes      | —                              | See [`common_users` variable](#common_users-variable) |
