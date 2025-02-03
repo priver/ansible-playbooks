@@ -1,2 +1,7 @@
 ---
 common_apt_repo_url: http://mirror.yandex.ru/debian/
+common_nameservers:
+  - "10.0.1.2"
+common_search_domains:
+  - auto.internal
+  - ru-central1.internal
