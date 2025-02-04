@@ -1,0 +1,8 @@
+---
+nginx_worker_processes: auto
+nginx_worker_rlimit_nofile: 65536
+nginx_worker_connections: 4096
+nginx_types_hash_max_size: 2048
+nginx_types_hash_bucket_size: 64
+nginx_cloudflare: false
+nginx_keepalive_timeout: 75s
